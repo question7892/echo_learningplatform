@@ -1,0 +1,48 @@
+{
+  // "快速创建uniapp视图与组件!"，默认scss
+  "create-uniapp-view.style": "scss",
+  "create-uniapp-view.typescript": false,
+  "create-uniapp-view.directory": true,
+  "create-uniapp-view.name": "与文件夹同名",
+
+  "uniapp-vscode.jsAutoApi": false,
+  "uniapp-vscode.jsAutoCompletion": false,
+  "uniapp-vscode.jsHover": false,
+
+  // 文件映射，json文件写注释
+  "files.associations": {
+    "pages.json": "jsonc",
+    "manifest.json": "jsonc"
+  },
+
+  // vue格式化程序配置
+  "[vue]": {
+    "editor.defaultFormatter": "octref.vetur",
+    // "editor.defaultFormatter": "johnsoncodehk.volar",
+    // "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+    "editor.tabSize": 2
+  },
+  "vetur.format.defaultFormatterOptions": {
+    "prettier": {
+      "printWidth": 130,
+      "singleQuote": false,
+      "tabWidth": 2,
+      "semi": false,
+      "htmlWhitespaceSensitivity": "ignore"
+    }
+  },
+
+  // 条件编译注释颜色
+  "better-comments.tags": [
+    {
+      "tag": "#",
+      "color": "#18b566",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": true,
+      "italic": false
+    }
+  ]
+}
