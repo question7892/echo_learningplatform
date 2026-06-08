@@ -21,3 +21,6 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw*
+
+# Backend folder (managed by someone else)
+echo_learntime后端/
