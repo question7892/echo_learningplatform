@@ -263,7 +263,7 @@ export default {
         z-index: 2;
         text-align: center;
         .welcome-text {
-          font-size: 32px;
+          font-size: 24px;
           color: #fff;
           font-weight: 700;
           margin-bottom: 20px;

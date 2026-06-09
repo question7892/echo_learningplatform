@@ -165,7 +165,7 @@ export default {
       
       &:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
       
-      .card-title { font-size: 24px; font-weight: 700; margin-bottom: 10px; }
+      .card-title { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
       .card-desc { font-size: 14px; opacity: 0.9; }
       
       .t-icon { width: 80px; height: 80px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2)); }
@@ -185,7 +185,9 @@ export default {
       background: #fff;
       border-radius: 16px;
       padding: 24px;
-      height: fit-content;
+      position: sticky;
+      top: 80px;
+      align-self: flex-start;
       box-shadow: 0 4px 12px rgba(0,0,0,0.02);
       
       .side-title { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 20px; }

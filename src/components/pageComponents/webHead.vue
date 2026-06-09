@@ -77,14 +77,14 @@
 }
 
 .logo-text-main {
-    font-size: 24px !important;
+    font-size: 22px !important;
     font-weight: bold !important;
     color: #17ead9 !important;
 }
 
 .logo-text-sub {
     margin-left: 10px !important;
-    font-size: 18px !important;
+    font-size: 15px !important;
     color: #333 !important;
 }
 

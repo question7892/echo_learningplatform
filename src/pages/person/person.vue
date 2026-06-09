@@ -127,7 +127,7 @@ export default {
       box-shadow: 0 4px 20px rgba(0,0,0,0.02);
       
       .avatar { width: 100px; height: 100px; border-radius: 50%; margin-bottom: 20px; border: 4px solid #f0fdfa; }
-      .nickname { font-size: 20px; font-weight: 700; color: #1e293b; margin-bottom: 10px; }
+      .nickname { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 10px; }
       .bio { font-size: 14px; color: #64748b; line-height: 1.5; margin-bottom: 24px; }
       .edit-btn { padding: 8px 24px; border-radius: 20px; background: #f1f5f9; font-size: 13px; color: #475569; cursor: pointer; transition: all 0.2s; &:hover { background: #e2e8f0; } }
     }
@@ -170,7 +170,7 @@ export default {
         padding: 24px;
         text-align: center;
         box-shadow: 0 4px 20px rgba(0,0,0,0.02);
-        .stat-val { font-size: 28px; font-weight: 700; color: #1e293b; margin-bottom: 8px; }
+        .stat-val { font-size: 22px; font-weight: 700; color: #1e293b; margin-bottom: 8px; }
         .stat-label { font-size: 13px; color: #64748b; }
       }
     }
@@ -181,7 +181,7 @@ export default {
       padding: 30px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.02);
       
-      .section-header { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 24px; }
+      .section-header { font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 24px; }
       
       .service-grid {
         display: grid;
