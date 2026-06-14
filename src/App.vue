@@ -14,7 +14,10 @@ export default {
       const token = uni.getStorageSync("token")
       if (!token) return uni.reLaunch({ url: "/pages/login/login" })
       const { data: res } = await uni.request({ url: "/token/get/user", method: "GET" })
-      // console.log(res)
+      if (!res || res.status != 200) {
+        uni.removeStorageSync("token")
+        return uni.reLaunch({ url: "/pages/login/login" })
+      }
       this.getUserInfo(res.data)
     },
 

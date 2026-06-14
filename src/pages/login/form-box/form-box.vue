@@ -143,7 +143,7 @@ export default {
           data: { loginAct: accountInfo.userName, password: accountInfo.password },
         })
         console.log(res)
-        if (res.status !== "200") return this.$refs.uToast.show({ type: "error", message: "登录失败" })
+        if (res.status != 200) return this.$refs.uToast.show({ type: "error", message: "登录失败" })
         if (res.message === "用户密码错误！") return this.$refs.uToast.show({ type: "error", message: "密码错误" })
 
         // 存储token，userInfo
@@ -169,7 +169,7 @@ export default {
           data: { userPhone: phoneInfo.phone, code: phoneInfo.code },
         })
         console.log(res)
-        if (res.status !== "200") return this.$refs.uToast.show({ type: "error", message: "登录失败" })
+        if (res.status != 200) return this.$refs.uToast.show({ type: "error", message: "登录失败" })
         if (res.message === "验证码已过期！") return this.$refs.uToast.show({ type: "error", message: "验证码已过期" })
 
         // 存储token，userInfo
@@ -195,7 +195,7 @@ export default {
         this.sending = true
         const { data: res } = await uni.request({ url: "/wechat/user/login/phone/code", method: "GET", data: { phone: phone } })
         console.log(res)
-        if (res.status !== "200") return uni.$u.toast("获取验证码失败")
+        if (res.status != 200) return uni.$u.toast("获取验证码失败")
         this.$refs.uToast.show({ type: "success", message: "验证码已发送" })
       }
     },

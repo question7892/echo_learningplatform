@@ -41,7 +41,7 @@ export default {
       try {
         const { data: res } = await uni.request({ url: "/index/get/all/re/comment", data: { parentId: this.comment[0].id } })
         // console.log(res)
-        if (res.status !== "200") return uni.$u.toast("获取回复列表失败")
+        if (res.status != 200) return uni.$u.toast("获取回复列表失败")
         this.replyList = res.data.comment
       } catch (err) {
         console.error(err)
@@ -61,7 +61,7 @@ export default {
           },
         })
         // console.log(res)
-        if (res.status !== "200") return uni.$u.toast("回复失败")
+        if (res.status != 200) return uni.$u.toast("回复失败")
         this.getReplyList()
       } catch (err) {
         console.error(err)

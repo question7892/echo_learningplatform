@@ -101,7 +101,7 @@ export default {
           },
         })
         console.log(res)
-        if (res.status !== "200") return uni.$u.toast("获取解析失败")
+        if (res.status != 200) return uni.$u.toast("获取解析失败")
 
         this.analysisList = res.data
       } catch (err) {

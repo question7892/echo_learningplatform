@@ -43,7 +43,7 @@
           <view class="option-group">
             <view
               class="option-group-item"
-              :class="[getMapValue(activeIndex + 1, item.key, questionInfoList[activeIndex].question_type) ? 'active' : '']"
+              :class="[getMapValue(questionInfoList[activeIndex].uuid, item.key, questionInfoList[activeIndex].question_type) ? 'active' : '']"
               v-for="(item, index) in questionInfoList[activeIndex].choices"
               :key="item.key"
               @click="selectOption(item, index, questionInfoList[activeIndex].question_type)"
@@ -121,9 +121,9 @@ export default {
       // 初始化map
       this.questionInfoList.forEach((item, index) => {
         if (item.question_type === "单选题") {
-          this.answerMap.set(index + 1, null)
+          this.answerMap.set(item.uuid, null)
         } else if (item.question_type === "多选题") {
-          this.answerMap.set(index + 1, [])
+          this.answerMap.set(item.uuid, [])
         }
       })
 
@@ -141,7 +141,14 @@ export default {
       })
       // console.log(res)
       this.loading = false
-      if (res.status !== "200") return uni.$u.toast("获取题组失败")
+      if (res.status != 200) return uni.$u.toast("获取题组失败")
+      
+      // format question_type from backend
+      res.data.forEach(item => {
+        if (item.question_type === 'single') item.question_type = '单选题'
+        if (item.question_type === 'multiple') item.question_type = '多选题'
+      })
+
       this.questionInfoList = res.data
       this.createAnswerMap()
       this.lineProgressPer = this.questionInfoList.length
@@ -152,12 +159,13 @@ export default {
     selectOption(item, index, type) {
       // this.optionActiveIndex = index
 
+      const qId = this.questionInfoList[this.activeIndex].uuid
       if (type === "单选题") {
         // 寻找key,设置value
-        this.answerMap.set(this.activeIndex + 1, item.key)
+        this.answerMap.set(qId, item.key)
       } else if (type === "多选题") {
         // 拿到选项卡
-        const optionArr = this.answerMap.get(this.activeIndex + 1)
+        const optionArr = this.answerMap.get(qId)
 
         // 没有则添加，有则去除
         if (!optionArr.includes(item.key)) {
@@ -245,7 +253,7 @@ export default {
           data: { QuestionSetId: this.questionGroupId, answerObj: answerObj },
         })
         console.log(res)
-        if (res.status !== "200") {
+        if (res.status != 200) {
           this.showModal = false
           return uni.$u.toast("提交失败")
         }

@@ -1,11 +1,21 @@
 // 根路由
 const BASE_URL = "http://59.110.163.182"
 
+import store from "@/store/index.js"
+
 // add token
 function addToken(args) {
-  if (uni.getStorageSync("token")) {
-    if (args.header) return (args.header.token = uni.getStorageSync("token"))
-    args.header = { token: uni.getStorageSync("token") }
+  const token = uni.getStorageSync("token")
+  if (token) {
+    if (!args.header) args.header = {}
+    args.header.token = token
+    args.header.authorization = token
+    
+    // Add currentUser header for backend APIs
+    const userInfo = store.state.userModule.userInfo
+    if (userInfo && userInfo.id) {
+      args.header.currentUser = userInfo.id
+    }
   }
 }
 
@@ -23,7 +33,8 @@ uni.addInterceptor("request", {
   // 响应拦截
   success({ data: res }) {
     // 无token、token无效、token过期
-    if (res.status == 511 || (res.status == 500 && res.message && res.message.includes("token"))) {
+    if (res.status == 511 || (res.status == 500 && res.message && res.message.toLowerCase().includes("token"))) {
+      uni.removeStorageSync("token")
       uni.reLaunch({ url: "/pages/login/login" })
     }
   },

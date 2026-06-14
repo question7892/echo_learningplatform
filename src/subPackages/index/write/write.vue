@@ -168,7 +168,7 @@ export default {
           data: { title: form.title, content: form.content, tags: form.tagList },
         })
         console.log(res)
-        if (res.status !== "200") return uni.$u.toast("上传数据失败")
+        if (res.status != 200) return uni.$u.toast("上传数据失败")
         const invitationId = res.data
 
         // 上传多张图片

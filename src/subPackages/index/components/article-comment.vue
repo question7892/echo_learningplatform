@@ -81,7 +81,7 @@ export default {
         url: "/index/like/one/comment",
         data: { commentId: comment.id, likeNumber: comment.likeNumber },
       })
-      if (res.status !== "200") return uni.$u.toast("出错了")
+      if (res.status != 200) return uni.$u.toast("出错了")
       this.$emit("giveCommentLikeHandler")
     },
 

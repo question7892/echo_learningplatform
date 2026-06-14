@@ -173,7 +173,7 @@ export default {
             content: value,
           },
         })
-        if (res.status !== "200") return uni.$u.toast("发布评论失败")
+        if (res.status != 200) return uni.$u.toast("发布评论失败")
         this.getCommentList()
       } catch (err) {
         console.error(err)
@@ -197,7 +197,7 @@ export default {
               invitationId: this.articleData.id,
             },
           })
-          if (res.status !== "200") return uni.$u.toast("取消点赞失败")
+          if (res.status != 200) return uni.$u.toast("取消点赞失败")
 
           this.articleData.thumbStatus = false
           this.articleData.likeNumber--
@@ -211,7 +211,7 @@ export default {
               invitationId: this.articleData.id,
             },
           })
-          if (res.status !== "200") return uni.$u.toast("点赞失败")
+          if (res.status != 200) return uni.$u.toast("点赞失败")
 
           this.articleData.thumbStatus = true
           this.articleData.likeNumber++

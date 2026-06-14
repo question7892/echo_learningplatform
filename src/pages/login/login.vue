@@ -92,9 +92,13 @@ export default {
           method: "POST",
           data: { code: code, nickName: userInfo.nickName, avatarUrl: userInfo.avatarUrl },
         })
-        if (res.status !== "200") return uni.$u.toast("登录失败")
+        if (res.status != 200) return uni.$u.toast("登录失败")
         uni.setStorageSync("token", res.data.token)
         this.getUserInfo(res.data.user)
+        uni.$u.toast("登录成功")
+        setTimeout(() => {
+          uni.reLaunch({ url: "/pages/index/index" })
+        }, 500)
       } catch (err) {
         console.error(err)
         if (err.errMsg === "getUserProfile:fail auth deny") return uni.$u.toast("取消授权")
