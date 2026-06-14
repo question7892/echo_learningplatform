@@ -1,5 +1,5 @@
 // 根路由
-const BASE_URL = "http://59.110.163.182"
+const BASE_URL = ""
 
 import store from "@/store/index.js"
 

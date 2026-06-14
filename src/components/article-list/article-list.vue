@@ -19,11 +19,11 @@
         <view class="card-content">
           <!-- 头部 ,头像，标题，时间-->
           <view class="article-list-item-header">
-            <u-avatar :src="item.user ? item.user.imageUrl : ''" fontSize="16" size="40"></u-avatar>
+            <u-avatar :src="(item.user && item.user.imageUrl) || ''" fontSize="16" size="40"></u-avatar>
             <view class="title">
               <view class="text u-line-1">{{ item.title }}</view>
               <view class="user-info">
-                <view class="name">{{ item.user ? item.user.nickName : '匿名' }}</view>
+                <view class="name">{{ (item.user && item.user.nickName) || '匿名用户' }}</view>
               </view>
             </view>
           </view>

@@ -148,6 +148,7 @@ export default {
 
         // 存储token，userInfo
         uni.setStorageSync("token", res.data.token)
+        uni.setStorageSync("userInfo", res.data.user)
         this.getUserInfo(res.data.user)
         uni.reLaunch({ url: "/pages/index/index" })
       } catch (err) {
@@ -174,6 +175,7 @@ export default {
 
         // 存储token，userInfo
         uni.setStorageSync("token", res.data.token)
+        uni.setStorageSync("userInfo", res.data.user)
         this.getUserInfo(res.data.user)
         uni.reLaunch({ url: "/pages/index/index" })
       } catch (err) {

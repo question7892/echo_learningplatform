@@ -135,7 +135,7 @@
 			&:hover:not(.active) { background: #f8fafc; color: #1e293b; }
 		}
 		
-		.card-header { padding: 0 25px 12px; font-weight: 700; color: #1e293b; border-bottom: 1px solid #f1f5f9; margin-bottom: 10px; }
+		.card-header { padding: 0 25px 12px; font-size: 14px; font-weight: 600; color: #475569; border-bottom: 1px solid #f1f5f9; margin-bottom: 10px; }
 		.community-mini-item { padding: 8px 25px; font-size: 14px; color: #64748b; cursor: pointer; &:hover { color: #17ead9; } }
 	}
 	
@@ -193,7 +193,7 @@
 			padding: 20px;
 			box-shadow: 0 4px 12px rgba(0,0,0,0.02);
 			
-			.card-header { font-weight: 700; color: #1e293b; margin-bottom: 15px; }
+			.card-header { font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 15px; }
 			.notice-item, .topic-item { font-size: 14px; color: #64748b; margin-bottom: 12px; cursor: pointer; line-height: 1.5; &:hover { color: #17ead9; } }
 			.topic-item { color: #2979ff; font-weight: 500; }
 		}

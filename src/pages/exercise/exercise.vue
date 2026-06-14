@@ -119,6 +119,7 @@ export default {
       try {
         const { data: res } = await uni.request({
           url: "/question/get/set/information",
+          method: "GET",
           data: { currentPage: this.paramsData.currentPage, pageSize: this.paramsData.pageSize },
         })
         if (res.status === "200") {
@@ -193,6 +194,7 @@ export default {
       .side-title { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 20px; }
       .side-nav-item {
         padding: 12px 20px;
+        font-size: 14px;
         border-radius: 8px;
         margin-bottom: 8px;
         color: #64748b;

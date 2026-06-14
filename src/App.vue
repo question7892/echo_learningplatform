@@ -13,12 +13,28 @@ export default {
     async getUserInfoInit() {
       const token = uni.getStorageSync("token")
       if (!token) return uni.reLaunch({ url: "/pages/login/login" })
-      const { data: res } = await uni.request({ url: "/token/get/user", method: "GET" })
-      if (!res || res.status != 200) {
-        uni.removeStorageSync("token")
-        return uni.reLaunch({ url: "/pages/login/login" })
+
+      // 优先从本地缓存恢复用户信息（后端 token 验证接口暂不可用）
+      const cachedUser = uni.getStorageSync("userInfo")
+      if (cachedUser) {
+        this.getUserInfo(cachedUser)
+        return
       }
-      this.getUserInfo(res.data)
+
+      // 兜底：尝试调后端接口
+      try {
+        const { data: res } = await uni.request({ url: "/token/get/user", method: "GET" })
+        if (res && res.status == 200 && res.data) {
+          uni.setStorageSync("userInfo", res.data)
+          this.getUserInfo(res.data)
+        } else {
+          uni.removeStorageSync("token")
+          uni.removeStorageSync("userInfo")
+          return uni.reLaunch({ url: "/pages/login/login" })
+        }
+      } catch (e) {
+        console.warn("获取用户信息失败，使用本地缓存")
+      }
     },
 
     // 获取小程序头部信息

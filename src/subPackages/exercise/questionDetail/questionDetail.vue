@@ -141,15 +141,15 @@ export default {
       })
       // console.log(res)
       this.loading = false
-      if (res.status != 200) return uni.$u.toast("获取题组失败")
-      
-      // format question_type from backend
-      res.data.forEach(item => {
-        if (item.question_type === 'single') item.question_type = '单选题'
-        if (item.question_type === 'multiple') item.question_type = '多选题'
-      })
+      if (res.status !== "200") return uni.$u.toast("获取题组失败")
 
-      this.questionInfoList = res.data
+      // 适配后端数据格式：question_type 映射 & 字段补全
+      const typeMap = { single: "单选题", multiple: "多选题" }
+      this.questionInfoList = (res.data || []).map(q => ({
+        ...q,
+        question_type: typeMap[q.question_type] || q.question_type || "单选题",
+        content: q.content || q.describe || "",
+      }))
       this.createAnswerMap()
       this.lineProgressPer = this.questionInfoList.length
       this.show = true

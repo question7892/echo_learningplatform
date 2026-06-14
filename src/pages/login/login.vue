@@ -28,12 +28,12 @@
           <view class="web-other-login">
             <view class="divider">
               <view class="line"></view>
-              <view class="text">第三方登录</view>
+              <view class="text">提示</view>
               <view class="line"></view>
             </view>
-            <view class="weixin-btn" @click="weixinLogin">
-              <u-icon name="weixin-circle-fill" color="#18b566" size="32"></u-icon>
-              <text>微信扫码一键登录</text>
+            <view class="weixin-btn hint">
+              <u-icon name="info-circle" color="#94a3b8" size="24"></u-icon>
+              <text>网页端请使用账号密码登录，微信登录仅支持小程序端</text>
             </view>
           </view>
         </view>
@@ -94,6 +94,7 @@ export default {
         })
         if (res.status != 200) return uni.$u.toast("登录失败")
         uni.setStorageSync("token", res.data.token)
+        uni.setStorageSync("userInfo", res.data.user)
         this.getUserInfo(res.data.user)
         uni.$u.toast("登录成功")
         setTimeout(() => {
@@ -254,6 +255,13 @@ export default {
           transition: all 0.2s;
           &:hover { background: #f8fafc; border-color: #cbd5e1; }
           text { margin-left: 12px; font-size: 14px; font-weight: 500; color: #475569; }
+          &.hint {
+            cursor: default;
+            background: #f8fafc;
+            border-style: dashed;
+            &:hover { background: #f8fafc; border-color: #e2e8f0; }
+            text { font-size: 13px; color: #94a3b8; font-weight: 400; }
+          }
         }
       }
     }

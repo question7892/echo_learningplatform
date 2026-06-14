@@ -91,6 +91,7 @@ export default {
         if (res.message === "用户名已存在") return this.$refs.uToast.show({ type: "error", message: "用户名已存在" })
 
         uni.setStorageSync("token", res.data.token)
+        uni.setStorageSync("userInfo", res.data.user)
         this.getUserInfo(res.data.user)
         uni.reLaunch({ url: "/pages/index/index" })
       } catch (err) {

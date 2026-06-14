@@ -94,6 +94,15 @@
       "overlay": {
         "warnings": false,
         "errors": true
+      },
+      "proxy": {
+        "/token": { "target": "http://59.110.163.182", "changeOrigin": true },
+        "/learnTree": { "target": "http://59.110.163.182", "changeOrigin": true },
+        "/wechat": { "target": "http://59.110.163.182", "changeOrigin": true },
+        "/question": { "target": "http://59.110.163.182", "changeOrigin": true },
+        "/index": { "target": "http://59.110.163.182", "changeOrigin": true },
+        "/discuss": { "target": "http://59.110.163.182", "changeOrigin": true },
+        "/user": { "target": "http://59.110.163.182", "changeOrigin": true }
       }
     },
     "titleNView": false
