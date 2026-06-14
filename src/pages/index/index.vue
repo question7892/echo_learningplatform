@@ -196,17 +196,12 @@ export default {
           url: "/index/get/all/resource",
           data: { currentPage: this.contentObj.fileList.paramsData.currentPage, pageSize: this.contentObj.fileList.paramsData.pageSize },
         })
-<<<<<<< HEAD
-        if (res.status == 200) {
-          this.contentObj.fileList.data = res.data.list
-=======
         if (res.status === "200") {
           this.contentObj.fileList.data = (res.data.list || []).map(item => ({
             ...item,
             tag: item.tags ? item.tags.split(',') : [],
             user: item.user || { imageUrl: '', nickName: '匿名用户' }
           }))
->>>>>>> 3b6807e (feat: 适配服务器环境 — 代理配置、接口修复、H5登录优化)
           this.contentObj.fileList.totalPages = res.data.pages
         }
       } finally { this.loading = false }
