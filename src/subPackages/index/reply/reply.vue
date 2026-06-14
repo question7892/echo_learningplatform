@@ -1,7 +1,7 @@
 <template>
   <view class="reply">
     <!-- 父级评论 -->
-    <article-comment :commentList="comment" :showIcons="false"></article-comment>
+    <article-comment :commentList="comment" :showIcons="false" isWeb></article-comment>
 
     <!-- 回复 -->
     <view class="reply-title">
@@ -12,7 +12,7 @@
     </view>
 
     <!-- 回复列表 -->
-    <article-reply :replyList="replyList"></article-reply>
+    <article-reply :replyList="replyList" isWeb></article-reply>
 
     <!-- 回复面板 -->
     <publishPanel @receiveText="publishReply" ref="replyPanel"></publishPanel>
@@ -105,10 +105,31 @@ page {
     width: 100%;
     box-sizing: border-box;
     border-bottom: 2rpx solid #f3f4f6;
+    box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
     &-text {
       font-weight: bold;
-      font-size: 40rpx;
+      font-size: $uni-font-size-subtitle;
     }
   }
 }
+
+/* #ifdef H5 */
+@media screen and (min-width: 768px) {
+  .reply {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 0 40px;
+    min-height: calc(100vh - 60px);
+
+    &-title {
+      margin-top: 24px;
+      border-radius: 16px 16px 0 0;
+      height: 56px;
+      padding: 0 40px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      &-text { font-size: 18px; }
+    }
+  }
+}
+/* #endif */
 </style>

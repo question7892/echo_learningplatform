@@ -82,7 +82,7 @@
     "title": "Echo 学习平台",
     "router": {
       "mode": "hash",
-      "base": "./"
+      "base": "/"
     },
     "devServer": {
       "port": 8080,

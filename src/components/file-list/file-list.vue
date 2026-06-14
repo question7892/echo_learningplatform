@@ -33,7 +33,7 @@
         </view>
       </view>
     </template>
-    <u-empty v-else class="empty" icon="http://cdn.uviewui.com/uview/empty/data.png" text="暂无相关资料"></u-empty>
+    <u-empty v-else class="empty" mode="data" text="暂无相关资料"></u-empty>
   </div>
 </template>
 
@@ -177,10 +177,11 @@ export default {
   padding: 20rpx;
   &-item {
     display: flex; align-items: center; background-color: #fff; padding: 20rpx; margin-bottom: 20rpx; border-radius: 20rpx;
+    box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
     .t-icon { width: 100rpx; height: 100rpx; margin-right: 20rpx; }
     &-info { flex: 1; display: flex; flex-direction: column;
-      .name { color: $uni-color-paragraph; font-size: 34rpx; }
-      .size { font-size: 24rpx; color: $uni-text-color-disable; }
+      .name { color: $uni-color-paragraph; font-size: $uni-font-size-article-body; }
+      .size { font-size: $uni-font-size-article-meta; color: $uni-text-color-disable; }
     }
     &-download { width: 80rpx; display: flex; justify-content: center; .t-icon-xiazai { width: 60rpx; height: 60rpx; } }
   }

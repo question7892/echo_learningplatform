@@ -17,16 +17,17 @@
         <!-- #endif -->
 
         <view class="card-content">
-          <!-- 头部 ,头像，标题，时间-->
-          <view class="article-list-item-header">
-            <u-avatar :src="(item.user && item.user.imageUrl) || ''" fontSize="16" size="40"></u-avatar>
-            <view class="title">
-              <view class="text u-line-1">{{ item.title }}</view>
-              <view class="user-info">
-                <view class="name">{{ (item.user && item.user.nickName) || '匿名用户' }}</view>
-              </view>
-            </view>
+          <!-- 作者信息：头像 + ID，左上角 -->
+          <view class="article-author">
+            <u-avatar
+              :src="(item.user && item.user.imageUrl) || '/static/default-avatar.jpg'"
+              size="40"
+            ></u-avatar>
+            <text class="author-name">{{ (item.user && item.user.nickName) || '匿名用户' }}</text>
           </view>
+
+          <!-- 标题 -->
+          <view class="article-title u-line-1">{{ item.title }}</view>
 
           <!-- 主体 ，内容，封面，标签-->
           <view class="article-list-item-main" v-if="!isWeb">
@@ -36,29 +37,29 @@
                 <my-tag class="tag" size="mini" type="success" v-for="(tag, index) in (item.tag || [])" :key="index">{{ tag }}</my-tag>
               </view>
             </view>
-            <u-image v-if="item.coverImgUrl" :showLoading="true" :src="item.coverImgUrl" width="160rpx" height="120rpx" radius="6px"></u-image>
+            <u-image v-if="item.coverImgUrl" :showLoading="true" :src="item.coverImgUrl" width="160rpx" height="120rpx" radius="8px" mode="aspectFill"></u-image>
           </view>
-          
+
           <!-- Web 版内容简述 -->
           <!-- #ifdef H5 -->
           <view class="web-desc u-line-2" v-if="isWeb">{{ item.content }}</view>
           <!-- #endif -->
 
-          <!-- 尾部，点赞，评论，浏览 -->
+          <!-- 尾部，日期，标签，点赞，评论，浏览 -->
           <view class="article-list-item-footer">
             <view class="date" v-if="!isWeb">{{ $u.timeFrom(Date.parse(item.create_time), false) }}</view>
             <view class="web-footer-left" v-if="isWeb">
                 <my-tag class="tag" size="mini" type="primary" v-for="(tag, index) in (item.tag || [])" :key="index">{{ tag }}</my-tag>
             </view>
             <view class="stats">
-              <view class="icon"> <u-icon name="eye" size="18"></u-icon> <text>{{ item.visitNumber }}</text> </view>
-              <view class="icon"> <u-icon name="thumb-up" size="18"></u-icon> <text>{{ item.likeNumber }}</text> </view>
+              <view class="icon"><u-icon name="eye" size="18"></u-icon><text>{{ item.visitNumber }}</text></view>
+              <view class="icon"><u-icon name="thumb-up" size="18"></u-icon><text>{{ item.likeNumber }}</text></view>
             </view>
           </view>
         </view>
       </view>
     </view>
-    <u-empty v-else class="empty" icon="http://cdn.uviewui.com/uview/empty/data.png" text="文章列表为空"></u-empty>
+    <u-empty v-else class="empty" mode="data" text="文章列表为空"></u-empty>
   </view>
 </template>
 
@@ -79,6 +80,27 @@ export default {
 <style lang="scss" scoped>
 .article-container { box-sizing: border-box; padding: 20rpx; }
 
+/* ====== 作者信息（头像 + ID，左上角） ====== */
+.article-author {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+  .author-name {
+    margin-left: 14rpx;
+    font-size: 26rpx;
+    color: #1e293b;
+    font-weight: 500;
+  }
+}
+
+/* ====== 标题 ====== */
+.article-title {
+  font-size: $uni-font-size-subtitle;
+  font-weight: bold;
+  color: #1e293b;
+  margin-bottom: 16rpx;
+}
+
 /* Web Grid Styles */
 .web-grid {
   padding: 0 !important;
@@ -86,7 +108,7 @@ export default {
     display: grid !important;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 24px;
-    
+
     .web-card {
       margin-bottom: 0 !important;
       padding: 0 !important;
@@ -96,20 +118,20 @@ export default {
       transition: all 0.3s;
       cursor: pointer;
       overflow: hidden;
-      
+
       &:hover { transform: translateY(-5px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); border-color: #17ead9; }
-      
+
       .card-content { padding: 20px; flex: 1; display: flex; flex-direction: column; }
-      
-      .article-list-item-header {
-        height: auto !important;
-        margin-bottom: 15px !important;
-        .title .text { font-size: 16px !important; color: #1e293b; }
-        .title .user-info .name { font-size: 13px !important; color: #64748b; }
+
+      .article-author {
+        margin-bottom: 12px;
+        .author-name { font-size: 14px; color: #334155; }
       }
-      
+
+      .article-title { font-size: 16px; margin-bottom: 12px; }
+
       .web-desc { font-size: 14px; color: #475569; line-height: 1.6; margin-bottom: 20px; flex: 1; }
-      
+
       .article-list-item-footer {
         padding-top: 15px; border-top: 1px solid #f1f5f9;
         .web-footer-left { display: flex; gap: 8px; flex: 1; }
@@ -121,17 +143,10 @@ export default {
 
 /* Original Mobile Styles */
 .article-list {
-  .item_hover { background-color: #f3f4f6; }
+  .item_hover { background-color: #f3f4f6; transition: background-color 0.2s ease; }
   &-item {
     background-color: #fff; margin-bottom: 20rpx; padding: 26rpx; border-radius: 16rpx;
-    &-header {
-      height: 90rpx; display: flex; align-items: center; margin-bottom: 20rpx;
-      .title {
-        height: 100%; display: flex; margin-left: 20rpx; flex-direction: column; justify-content: space-between;
-        .text { font-size: 36rpx; font-weight: bold; }
-        .user-info { display: flex; align-items: center; font-size: 30rpx; color: $uni-color-title; }
-      }
-    }
+    box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
     &-main {
       display: flex; height: 150rpx;
       .content {
@@ -142,8 +157,8 @@ export default {
     }
     &-footer {
       display: flex; padding-top: 20rpx; justify-content: flex-end; align-items: center;
-      .date { margin-right: auto; font-size: 28rpx; color: $uni-text-color-disable; }
-      .icon { margin-right: 30rpx; display: flex; align-items: center; color: $uni-text-color-disable; font-size: $uni-font-size-base; & > view { margin-left: 4rpx; color: #19be6b; } }
+      .date { margin-right: auto; font-size: $uni-font-size-article-meta; color: $uni-text-color-disable; }
+      .icon { margin-right: 30rpx; display: flex; align-items: center; color: $uni-text-color-disable; font-size: $uni-font-size-article-meta; & > view { margin-left: 4rpx; color: #19be6b; } }
     }
   }
 }

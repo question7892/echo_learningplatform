@@ -3,32 +3,26 @@
  * @page 刷题页
  */
 <template>
-  <view class="question-container">
+  <view class="question-container" :class="{ 'web-layout': isWeb }">
     <!-- 导航条 -->
     <view class="question-nav" :style="{ height: navHeight + 'px' }"></view>
 
     <!-- main -->
     <view class="question-main" :style="{ paddingTop: navHeight + 'px' }">
       <!-- 进度条 -->
-      <view class="question-main-line-progress">
-        <u-line-progress
-          :percentage="lineProgressPer"
-          activeColor="#19be6b"
-          :height="rpxToPx(16)"
-          :showText="false"
-        ></u-line-progress>
-        <view class="qmlp-text">
-          <text class="qmlp-text-up">{{ lineProgress }}</text>
-          <text class="qmlp-text-fill">{{ "/" + questionInfoList.length }}</text>
+      <view class="progress-section">
+        <view class="progress-bar">
+          <view class="progress-fill" :style="{ width: (activeIndex + 1) / questionInfoList.length * 100 + '%' }"></view>
         </view>
+        <text class="progress-text">{{ activeIndex + 1 }}<text class="progress-total"> / {{ questionInfoList.length }}</text></text>
       </view>
 
       <!-- 题目信息 -->
       <u-transition :show="show" mode="fade-left">
-        <view class="question-main-info">
-          <!-- 题目类型 -->
+        <view class="question-card">
+          <!-- 题目类型标签 -->
           <my-tag
-            class="type"
+            class="q-type-tag"
             :type="questionInfoList[activeIndex].question_type === '单选题' ? 'success' : 'error'"
             size="mini"
             :circle="false"
@@ -36,39 +30,39 @@
             {{ questionInfoList[activeIndex].question_type }}
           </my-tag>
 
-          <!-- 题目 -->
-          <view class="desc">{{ questionInfoList[activeIndex].content }}</view>
+          <!-- 题号 + 题目 -->
+          <view class="q-body">
+            <text class="q-index">{{ activeIndex + 1 }}.</text>
+            <text class="q-content">{{ questionInfoList[activeIndex].content }}</text>
+          </view>
 
-          <!-- 选项卡 -->
-          <view class="option-group">
+          <!-- 选项列表 -->
+          <view class="option-list">
             <view
-              class="option-group-item"
-              :class="[getMapValue(questionInfoList[activeIndex].uuid, item.key, questionInfoList[activeIndex].question_type) ? 'active' : '']"
+              class="option-item"
+              :class="[getMapValue(questionInfoList[activeIndex].uuid, item.key, questionInfoList[activeIndex].question_type) ? 'selected' : '']"
               v-for="(item, index) in questionInfoList[activeIndex].choices"
               :key="item.key"
               @click="selectOption(item, index, questionInfoList[activeIndex].question_type)"
             >
-              <view class="key">{{ item.key + "." }}</view>
-              <view class="option-group-item-text">{{ item.choice }}</view>
+              <view class="option-key">{{ item.key }}</view>
+              <text class="option-text">{{ item.choice }}</text>
             </view>
           </view>
         </view>
       </u-transition>
 
-      <!-- route button-->
-      <view class="question-main-route">
-        <!-- 上一题 -->
-        <u-button text="上一题" :disabled="prevBtnDisabled" type="info" shape="circle" @click="switchQuestion('prev')"></u-button>
-        <!-- 下一题 -->
-        <u-button
-          :text="nextBtn.text"
-          :disabled="nextBtn.disabled"
-          :loading="nextBtn.loading"
-          type="success"
-          color="#19be6b"
-          shape="circle"
-          @click="switchQuestion('next')"
-        ></u-button>
+      <!-- 导航按钮 -->
+      <view class="nav-buttons">
+        <view class="btn-prev" @click="switchQuestion('prev')" v-if="activeIndex > 0">
+          <u-icon name="arrow-left" size="18"></u-icon>
+          <text>上一题</text>
+        </view>
+        <view class="btn-spacer" v-if="activeIndex === 0"></view>
+        <view class="btn-next" @click="switchQuestion('next')">
+          <text>{{ nextBtn.text }}</text>
+          <u-icon name="arrow-right" size="18"></u-icon>
+        </view>
       </view>
     </view>
 
@@ -91,6 +85,9 @@
 import { systemInfo } from "@/mixin.js"
 import { questionInfoList } from "@/mock/questionList.js"
 export default {
+  props: {
+    isWeb: { type: Boolean, default: false }
+  },
   components: {},
   mixins: [systemInfo],
   data: () => ({
@@ -291,99 +288,242 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@mixin vertical_center($mode: flex-start) {
-  display: flex;
-  justify-content: $mode;
-  align-items: center;
-}
+* { box-sizing: border-box; }
 
 .question-container {
   min-height: 100vh;
-  // background-color: $uni-bg-color-grey;
+  background: #f0f2f5;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 .question-nav {
   position: fixed;
+  top: 0;
   width: 100%;
-  background-image: linear-gradient(120deg, #96e6a1 0%, #d4fc79 100%);
+  z-index: 10;
+  background: linear-gradient(135deg, #96e6a1 0%, #d4fc79 100%);
 }
 
 .question-main {
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
   min-height: 100vh;
-  &-line-progress {
-    @include vertical_center();
-    padding: 20rpx;
+  padding: 20rpx;
+}
 
-    .qmlp-text {
-      @include vertical_center();
-      margin-left: 30rpx;
+/* ====== 进度条 ====== */
+.progress-section {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 20rpx 10rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.03);
+}
+.progress-bar {
+  flex: 1;
+  height: 12rpx;
+  background: #e5e7eb;
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #19be6b, #71d5a1);
+  border-radius: 6rpx;
+  transition: width 0.35s ease;
+}
+.progress-text {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+}
+.progress-total {
+  color: #94a3b8;
+  font-weight: 400;
+}
 
-      &-up {
-        color: #71d5a1;
-      }
-      &-fill {
-        color: $uni-text-color-disable;
-      }
-    }
+/* ====== 题目卡片 ====== */
+.question-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 32rpx 28rpx;
+  box-shadow: 0 2rpx 16rpx rgba(0,0,0,0.04);
+}
+
+/* 题型标签 */
+.q-type-tag {
+  margin-bottom: 20rpx;
+}
+
+/* 题号 + 题目文本 */
+.q-body {
+  display: flex;
+  margin-bottom: 36rpx;
+}
+.q-index {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #19be6b;
+  margin-right: 10rpx;
+  flex-shrink: 0;
+}
+.q-content {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.6;
+}
+
+/* ====== 选项列表 ====== */
+.option-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.option-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 24rpx;
+  border-radius: 16rpx;
+  border: 2rpx solid #e5e7eb;
+  background: #f9fafb;
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.option-key {
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #64748b;
+  background: #e5e7eb;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.option-text {
+  flex: 1;
+  margin-left: 20rpx;
+  font-size: 30rpx;
+  color: #334155;
+  line-height: 1.5;
+}
+
+/* 选中态 */
+.option-item.selected {
+  border-color: #19be6b;
+  background: linear-gradient(to right, #ecfdf5, #f0fdf4);
+  box-shadow: 0 2rpx 12rpx rgba(25,190,107,0.12);
+
+  .option-key {
+    background: #19be6b;
+    color: #fff;
+  }
+  .option-text {
+    color: #16a34a;
+    font-weight: 600;
+  }
+}
+
+/* ====== 导航按钮 ====== */
+.nav-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding: 40rpx 0 60rpx;
+  gap: 24rpx;
+}
+.btn-prev, .btn-next {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+  flex: 1;
+  height: 88rpx;
+  border-radius: 44rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.btn-prev {
+  background: #e5e7eb;
+  color: #475569;
+  &:active { background: #d1d5db; }
+}
+.btn-next {
+  background: linear-gradient(135deg, #19be6b, #71d5a1);
+  color: #fff;
+  box-shadow: 0 4rpx 16rpx rgba(25,190,107,0.3);
+  &:active { transform: scale(0.97); }
+}
+.btn-spacer {
+  flex: 1;
+}
+
+/* ====== Web 端适配 ====== */
+.web-layout {
+  .question-main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 28px 40px;
   }
 
-  &-info {
-    padding: 20rpx;
+  .progress-section {
+    padding: 20px 20px;
+    border-radius: 14px;
+  }
+  .progress-bar { height: 8px; border-radius: 4px; }
+  .progress-fill { border-radius: 4px; }
+  .progress-text { font-size: 15px; }
 
-    .desc {
-      margin-top: 20rpx;
-      font-size: 35rpx;
-      color: $uni-color-paragraph;
-    }
-
-    .option-group {
-      display: flex;
-      flex-direction: column;
-      margin-top: 40rpx;
-
-      &-item {
-        display: flex;
-
-        box-sizing: border-box;
-        width: 100%;
-        background-color: #f3f4f6;
-        border-radius: 20rpx;
-        padding: 20rpx;
-        margin-bottom: 30rpx;
-        color: $uni-text-color-grey;
-
-        &:last-of-type {
-          margin: 0;
-        }
-
-        &.active {
-          background-image: linear-gradient(to right, #19be6b 0%, #71d5a1 100%);
-          color: #fff;
-        }
-
-        .key {
-          width: 50rpx;
-        }
-
-        &-text {
-          flex: 1;
-          font-size: 32rpx;
-        }
-      }
-    }
+  .question-card {
+    border-radius: 16px;
+    padding: 36px 32px;
   }
 
-  &-route {
-    @include vertical_center(space-evenly);
-    height: 200rpx;
-    margin: auto 0 100rpx;
+  .q-index { font-size: 21px; margin-right: 10px; }
+  .q-content { font-size: 21px; }
 
-    ::v-deep .u-button {
-      width: 40%;
-    }
+  .option-list { gap: 14px; }
+  .option-item {
+    padding: 18px 24px;
+    border-radius: 14px;
+    border: 1.5px solid #e5e7eb;
+  }
+  .option-key {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+  .option-text {
+    font-size: 17px;
+    margin-left: 16px;
+  }
+
+  .nav-buttons {
+    padding: 36px 0 48px;
+    gap: 20px;
+  }
+  .btn-prev, .btn-next {
+    height: 52px;
+    border-radius: 26px;
+    font-size: 16px;
   }
 }
 </style>

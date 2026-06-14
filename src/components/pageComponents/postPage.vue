@@ -11,7 +11,7 @@
 			<!-- 部分文章内容 -->
 			<view class="content">
 				<text class="myContent">{{item.content}}</text>
-				<image class="content-img" :src="item.contentImg" mode=""></image>
+				<image class="content-img" :src="item.contentImg" mode="aspectFill"></image>
 			</view>
 			<!-- 阅读点赞评论记录 -->
 			<view class="read_like_comment">
@@ -113,10 +113,10 @@
 		padding-left: 20rpx;
 		border-radius: 20rpx;
 		margin: 10rpx 20rpx 10rpx 20rpx;
-		box-shadow: 5rpx 10rpx 10rpx rgba(0, 0, 0, .3);
+		box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
 
 		.time {
-			font-size: 30rpx;
+			font-size: 26rpx;
 		}
 
 		.tittle {
@@ -146,7 +146,7 @@
 			display: flex;
 			flex-direction: row;
 			align-items: center;
-			justify-content: space-around;
+			justify-content: space-between;
 
 			.myContent {
 				width: 70%;
@@ -161,19 +161,21 @@
 				-webkit-box-orient: vertical;
 
 				color: silver;
+				font-size: 28rpx;
+				line-height: 1.6;
 			}
 
 			&-img {
 				width: 20%;
 				height: 100rpx;
-				background-size: 100% 100%;
+				border-radius: 8rpx;
 			}
 		}
 
 		.read_like_comment {
 			display: flex;
 			flex-direction: row;
-			justify-content: space-around;
+			justify-content: space-between;
 
 			.author {
 				// width: 4%;
@@ -185,7 +187,7 @@
 			._yueduliang,
 			._good,
 			._pinglun {
-				font-size: 30rpx;
+				font-size: 26rpx;
 			}
 
 			.myyueduliang,

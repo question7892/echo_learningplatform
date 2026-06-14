@@ -116,16 +116,19 @@ export default {
 
     // 提交表单
     formSubmit(e) {
-      const { value: userInfo } = e.detail
+      // 使用 v-model 绑定的数据而不是 e.detail.value
+      // uni-app 中 v-model 和 form submit 同时使用时 e.detail.value 可能为空
+      const first = this.firstColumn.trim()
+      const second = this.secondColumn.trim()
       if (!this.isPhoneLogin) {
-        if (userInfo.userName && userInfo.password) {
-          this.accountLogin(userInfo)
+        if (first && second) {
+          this.accountLogin({ userName: first, password: second })
         } else {
           this.$refs.uToast.show({ type: "error", message: "用户名或密码不能为空" })
         }
       } else {
-        if (userInfo.phone && userInfo.code) {
-          this.phoneLogin(userInfo)
+        if (first && second) {
+          this.phoneLogin({ phone: first, code: second })
         } else {
           this.$refs.uToast.show({ type: "error", message: "电话号码或验证码不能为空" })
         }

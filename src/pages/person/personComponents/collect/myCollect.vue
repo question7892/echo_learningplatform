@@ -8,7 +8,7 @@
 			<text class="tittle">{{article.title}}</text>
 			<!-- 头像，昵称，关注: -->
 			<view class="img_name_like">
-				<image class="_img" :src="article.src" mode=""></image>
+				<image class="_img" :src="article.src || '/static/default-avatar.jpg'" mode="aspectFill"></image>
 				<view class="name_like">
 					<text class="author_name">{{article.author}}</text>
 					<text class="original">原创</text>
@@ -20,7 +20,7 @@
 		<view class="myContent">
 			<text class="myContent-main">{{article.content}}</text>
 			<view v-if="article.contentImg.length!==0" class="myContent-imgGroup">
-				<img v-for="(target,index) in article.contentImg" :key="index" class="img" :src="target" alt="">
+				<image v-for="(target,index) in article.contentImg" :key="index" class="img" :src="target" mode="aspectFill"></image>
 			</view>
 		</view>
 		<!-- 评论部分: -->
@@ -33,7 +33,7 @@
 				<!-- 单个评论： -->
 				<view class="comment-list-single" v-for="(item,index) in comments" :key="index">
 					<!-- 用户头像: -->
-					<image class="userimg" :src="item.userImg" mode=""></image>
+					<image class="userimg" :src="item.userImg || '/static/default-avatar.jpg'" mode="aspectFill"></image>
 					<!-- 用户的昵称和发送的时间: -->
 					<view class="username_content_time">
 						<text class="user_name">{{item.userName}}</text>
@@ -200,7 +200,7 @@
 			// border-bottom: 0.1rpx solid #eeb8c3;
 
 			.tittle {
-				font-size: 50rpx;
+				font-size: 36rpx;
 				margin-left: 20rpx;
 			}
 
@@ -222,7 +222,7 @@
 					flex-direction: column;
 
 					.author_name {
-						font-size: 35rpx;
+						font-size: 30rpx;
 						font-weight: bold;
 					}
 
@@ -244,7 +244,7 @@
 					font-weight: bold;
 					height: 70rpx;
 					line-height: 70rpx;
-					box-shadow: 10rpx 10rpx 10rpx rgba(236, 155, 173, .3);
+					box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
 				}
 			}
 
@@ -255,8 +255,8 @@
 			flex-direction: column;
 
 			&-main {
-				font-size: 35rpx;
-				font-weight: bold;
+				font-size: 30rpx;
+				font-weight: normal;
 				color: #36282b;
 				margin: 0 20rpx 0 20rpx;
 				font-style: '微软雅黑';
@@ -268,7 +268,8 @@
 				margin: 10rpx 20rpx 10rpx 20rpx;
 
 				.img {
-					width: 50%;
+					width: 48%;
+					object-fit: cover;
 					height: 200rpx;
 				}
 			}
@@ -301,6 +302,10 @@
 
 				&-single {
 					display: flex;
+					border-radius: 10rpx;
+					padding: 16rpx 20rpx;
+					box-shadow: 0 1rpx 6rpx rgba(0, 0, 0, 0.04);
+					margin-right: 10rpx;
 					flex-direction: row;
 					background-color: white;
 					margin-bottom: 10rpx;
@@ -309,8 +314,8 @@
 					// justify-content: space-around;
 					.userimg {
 						border-radius: 50%;
-						width: 100rpx;
-						height: 100rpx;
+						width: 80rpx;
+						height: 80rpx;
 						overflow: hidden;
 						margin-right: 20rpx;
 					}
@@ -321,15 +326,15 @@
 
 						.user_name {
 
-							font-size: 30rpx;
+							font-size: 28rpx;
 						}
 
 						.user_comment {
-							font-size: 35rpx;
+							font-size: 28rpx;
 						}
 
 						.user_time {
-							font-size: 25rpx;
+							font-size: 24rpx;
 							color: grey;
 						}
 					}

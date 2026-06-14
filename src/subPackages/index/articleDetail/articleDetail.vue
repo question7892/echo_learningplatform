@@ -8,7 +8,9 @@
     <!-- 作者 -->
     <view class="article-author">
       <view class="article-author-lf">
-        <u-avatar :src="articleData.avatarUrl" :size="rpxToPx(80)" @click="previewAvatar(articleData.avatarUrl)"></u-avatar>
+        <view class="author-avatar" @click="previewAvatar(articleData.avatarUrl)">
+          <image class="avatar-img" :src="displayAvatar" mode="aspectFill"></image>
+        </view>
 
         <!-- 用户信息 -->
         <view class="article-author-lf-info">
@@ -60,13 +62,17 @@
       @giveCommentLikeHandler="giveCommentLikeHandler"
       :commentList="commentList"
       :hasLikedArr="hasLikedArr"
+      isWeb
     ></article-comment>
 
     <!-- 底部栏 -->
     <view class="article-bar">
       <!-- 输入框 -->
       <view class="article-bar-input" @click.stop="openPanel">
-        <u-input :disabled="true" shape="circle" :fontSize="rpxToPx(25)" placeholder="发表评论" prefixIcon="edit-pen"></u-input>
+        <view class="comment-placeholder">
+          <u-icon name="edit-pen" :size="rpxToPx(36)" color="#c0c4cc"></u-icon>
+          <text class="placeholder-text">发表评论</text>
+        </view>
       </view>
 
       <!-- 点赞与评论 -->
@@ -75,9 +81,9 @@
           <u-icon name="thumb-up" :size="rpxToPx(60)" :color="articleThumbStatus"></u-icon>
           <u-badge type="error" max="99" :value="articleData.likeNumber" :offset="[-6, -12]" absolute></u-badge>
         </view>
-        <view class="article-bar-rg-icon">
+        <view class="article-bar-rg-icon" @click.stop="scrollToComment">
           <u-icon name="chat" :size="rpxToPx(60)" color="#808080"></u-icon>
-          <u-badge type="error" max="99" :value="articleData.commentNumber" :offset="[-6, -12]" absolute></u-badge>
+          <u-badge v-if="showCommentBadge" type="error" max="99" :value="articleData.commentNumber" :offset="[-6, -12]" absolute></u-badge>
         </view>
       </view>
     </view>
@@ -123,8 +129,13 @@ export default {
       thumbColor: "#808080",
     },
     commentText: "",
+    showCommentBadge: true,
   }),
   computed: {
+    // 作者头像（默认头像回退）
+    displayAvatar() {
+      return this.articleData.avatarUrl || '/static/default-avatar.jpg'
+    },
     // 获取作者对文章的点赞状态
     articleThumbStatus() {
       return this.articleData.thumbStatus ? "#fa3534" : "#808080"
@@ -223,6 +234,22 @@ export default {
       }
     },
 
+    // 滚动到评论区
+    scrollToComment() {
+      this.showCommentBadge = false
+      uni.pageScrollTo({ scrollTop: 0, duration: 300 })
+      this.$nextTick(() => {
+        const query = uni.createSelectorQuery().in(this)
+        query.select('.article-comment-header').boundingClientRect()
+        query.selectViewport().scrollOffset()
+        query.exec((res) => {
+          if (res[0] && res[1]) {
+            uni.pageScrollTo({ scrollTop: res[1].scrollTop + res[0].top - 100, duration: 300 })
+          }
+        })
+      })
+    },
+
     // 评论点赞处理函数
     giveCommentLikeHandler() {
       this.getCommentList()
@@ -268,12 +295,27 @@ $article_bar: 100rpx;
     height: 120rpx;
     background-color: #fff;
     padding: $base_padding;
+    box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+    margin-bottom: 4rpx;
 
     &-lf {
       flex: 1;
       margin-right: 30rpx;
       @include vertical_center();
       height: 100%;
+
+      .author-avatar {
+        width: 80rpx;
+        height: 80rpx;
+        border-radius: 50%;
+        overflow: hidden;
+        flex-shrink: 0;
+        .avatar-img {
+          width: 100%;
+          height: 100%;
+          display: block;
+        }
+      }
 
       &-info {
         flex: 1;
@@ -290,15 +332,15 @@ $article_bar: 100rpx;
         }
         .aali-tip {
           @include vertical_center();
-          font-size: 30rpx;
+          font-size: $uni-font-size-article-meta;
           color: $uni-text-color-placeholder;
           &-date {
             color: $uni-text-color-disable;
-            font-size: 28rpx;
+            font-size: $uni-font-size-article-meta;
           }
           &-view {
             margin-left: auto;
-            font-size: 28rpx;
+            font-size: $uni-font-size-article-meta;
             color: $uni-opacity-disabled;
           }
         }
@@ -312,9 +354,17 @@ $article_bar: 100rpx;
   &-main {
     background-color: #fff;
     padding: 20rpx 40rpx;
+    // swiper 圆角
+    ::v-deep .u-swiper {
+      border-radius: 12rpx;
+      overflow: hidden;
+    }
     &-content {
       color: $uni-color-paragraph;
       margin-top: 40rpx;
+      font-size: $uni-font-size-article-body;
+      line-height: $uni-line-height-article;
+      text-align: justify;
     }
 
     &-tags {
@@ -335,7 +385,8 @@ $article_bar: 100rpx;
     line-height: 100rpx;
     font-weight: bold;
     padding: 0 40rpx;
-    font-size: 40rpx;
+    font-size: $uni-font-size-subtitle;
+    border-bottom: 2rpx solid #f3f4f6;
   }
 
   &-bar {
@@ -352,9 +403,23 @@ $article_bar: 100rpx;
 
     &-input {
       width: 70%;
+      cursor: pointer;
 
-      ::v-deep .u-input {
-        height: 36rpx;
+      .comment-placeholder {
+        display: flex;
+        align-items: center;
+        height: 64rpx;
+        padding: 0 24rpx;
+        background: #f5f7fa;
+        border-radius: 64rpx;
+        border: 2rpx solid #ebeef5;
+        transition: border-color 0.2s;
+
+        .placeholder-text {
+          margin-left: 12rpx;
+          font-size: 26rpx;
+          color: #c0c4cc;
+        }
       }
     }
 
@@ -364,8 +429,127 @@ $article_bar: 100rpx;
 
       &-icon {
         position: relative;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+        &:active { transform: scale(0.9); }
       }
     }
   }
 }
+
+/* #ifdef H5 */
+@media screen and (min-width: 768px) {
+  .article {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 40px 120px;
+    background-color: #f8fafc;
+    min-height: calc(100vh - 60px);
+
+    &-caption {
+      font-size: 28px;
+      font-weight: 700;
+      padding: 32px 40px;
+      border-radius: 16px 16px 0 0;
+      line-height: 1.4;
+      color: #1e293b;
+    }
+
+    &-author {
+      height: auto;
+      padding: 24px 40px;
+      border-bottom: 1px solid #f1f5f9;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+
+      &-lf {
+        .author-avatar {
+          width: 48px;
+          height: 48px;
+        }
+      }
+      &-lf-info {
+        margin-left: 20px;
+        .aali-name { font-size: 17px; }
+        .aali-tip { font-size: 13px; gap: 16px; }
+      }
+    }
+
+    &-main {
+      padding: 32px 40px;
+      ::v-deep .u-swiper {
+        border-radius: 12px;
+        overflow: hidden;
+        max-height: 420px;
+      }
+      &-content {
+        font-size: 16px;
+        line-height: 2;
+        color: #334155;
+        margin-top: 32px;
+      }
+      &-tags {
+        height: auto;
+        padding: 20px 0 0;
+        .tag { margin-right: 12px; }
+      }
+    }
+
+    &-comment-header {
+      margin-top: 24px;
+      border-radius: 16px 16px 0 0;
+      height: 56px;
+      line-height: 56px;
+      font-size: 18px;
+      padding: 0 40px;
+    }
+
+    &-bar {
+      height: 64px;
+      padding: 0 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: 900px;
+      border-radius: 16px 16px 0 0;
+      box-shadow: 0 -2px 16px rgba(0,0,0,0.06);
+      border-top: none;
+      &-input {
+        max-width: 480px;
+        .comment-placeholder {
+          height: 40px;
+          padding: 0 20px;
+          border-radius: 40px;
+          border: 1px solid #e2e8f0;
+          background: #f8fafc;
+          &:hover {
+            border-color: #17ead9;
+            background: #fff;
+          }
+          .placeholder-text {
+            margin-left: 10px;
+            font-size: 14px;
+            color: #94a3b8;
+          }
+          ::v-deep .u-icon__icon {
+            font-size: 18px !important;
+            line-height: 18px !important;
+          }
+        }
+      }
+      &-rg {
+        gap: 20px;
+        &-icon {
+          ::v-deep .u-icon__icon {
+            font-size: 24px !important;
+            line-height: 24px !important;
+          }
+          ::v-deep .u-badge {
+            transform: scale(0.85);
+          }
+        }
+      }
+    }
+  }
+}
+/* #endif */
 </style>
+

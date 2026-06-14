@@ -11,7 +11,7 @@
     </view>
 
     <!-- 空白页 -->
-    <u-empty v-else class="empty" icon="http://cdn.uviewui.com/uview/empty/data.png" text="你还没有错题"></u-empty>
+    <u-empty v-else class="empty" mode="data" text="你还没有错题"></u-empty>
   </view>
 </template>
 

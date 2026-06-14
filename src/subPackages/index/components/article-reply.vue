@@ -1,10 +1,12 @@
 <template>
   <view class="reply">
     <!-- 回复列表 -->
-    <view class="reply-list" v-if="replyList.length">
-      <view class="reply-list-item" v-for="item in replyList" :key="item.id" hover-class="item_hover">
+    <view class="reply-list" :class="{ 'web-list': isWeb }" v-if="replyList.length">
+      <view class="reply-list-item" :class="{ 'web-item': isWeb }" v-for="item in replyList" :key="item.id" hover-class="item_hover">
         <view class="rli-lf">
-          <u-avatar :src="item.avatarUrl" :size="rpxToPx(70)"></u-avatar>
+          <view class="reply-avatar">
+            <image class="avatar-img" :src="getAvatarUrl(item.avatarUrl)" mode="aspectFill"></image>
+          </view>
         </view>
 
         <!-- 回复主体 -->
@@ -26,7 +28,7 @@
     <!-- 空白页 -->
     <!-- 空白页 -->
     <view class="reply-empty" v-else>
-      <u-empty text="暂无回复" icon="http://cdn.uviewui.com/uview/empty/message.png"></u-empty>
+      <u-empty text="暂无回复" mode="message"></u-empty>
     </view>
   </view>
 </template>
@@ -38,10 +40,19 @@ export default {
       type: Array,
       required: true,
     },
+    isWeb: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({}),
   computed: {},
-  methods: {},
+  methods: {
+    // 头像回退
+    getAvatarUrl(url) {
+      return url || '/static/default-avatar.jpg'
+    },
+  },
   watch: {},
 
   mounted() {},
@@ -53,14 +64,32 @@ export default {
   &-list {
     .item_hover {
       background-color: #f3f4f6;
+      transition: background-color 0.2s ease;
     }
     &-item {
       background-color: #fff;
-      padding: 20rpx;
+      padding: 24rpx 20rpx;
       display: flex;
+      border-radius: 12rpx;
+      box-shadow: 0 1rpx 8rpx rgba(0, 0, 0, 0.03);
+      margin: 0 0 16rpx;
+      border-left: 6rpx solid #17ead9;
+      margin-left: 16rpx;
 
       .rli-lf {
-        margin-right: 30rpx;
+        margin-right: 24rpx;
+        .reply-avatar {
+          width: 70rpx;
+          height: 70rpx;
+          border-radius: 50%;
+          overflow: hidden;
+          flex-shrink: 0;
+          .avatar-img {
+            width: 100%;
+            height: 100%;
+            display: block;
+          }
+        }
       }
       .rli-rg {
         flex: 1;
@@ -71,8 +100,8 @@ export default {
           display: flex;
           align-items: center;
           font-weight: 600;
-          font-size: 28rpx;
-          margin-bottom: 10rpx;
+          font-size: $uni-font-size-article-comment;
+          margin-bottom: 8rpx;
           &-name {
             margin-right: 20rpx;
           }
@@ -80,16 +109,63 @@ export default {
 
         &-date {
           color: $uni-text-color-disable;
-          font-size: 26rpx;
-          margin-bottom: 20rpx;
+          font-size: $uni-font-size-article-meta;
+          margin-bottom: 16rpx;
         }
 
         &-content {
           color: $uni-color-paragraph;
-          font-size: 30rpx;
+          font-size: $uni-font-size-article-comment;
+          line-height: 1.6;
         }
       }
     }
   }
 }
+
+/* #ifdef H5 */
+@media screen and (min-width: 768px) {
+  .reply {
+    .web-list {
+      .web-item {
+        padding: 20px 24px;
+        margin: 0 0 12px;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        border-left: 4px solid #17ead9;
+        margin-left: 20px;
+        transition: background-color 0.2s ease;
+        cursor: pointer;
+        &:hover { background-color: #fafbfc; }
+
+        .rli-lf {
+          margin-right: 20px;
+          .reply-avatar {
+            width: 42px;
+            height: 42px;
+          }
+        }
+
+        .rli-rg {
+          &-user {
+            font-size: 15px;
+            margin-bottom: 6px;
+          }
+          &-date {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 10px;
+          }
+          &-content {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #475569;
+          }
+        }
+      }
+    }
+  }
+}
+/* #endif */
 </style>
+

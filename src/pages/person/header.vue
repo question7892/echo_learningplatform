@@ -2,7 +2,7 @@
   <view>
     <!-- 头部模块： -->
     <view class="header">
-      <image class="header-avatar" :src="userInfo.imageUrl"></image>
+      <image class="header-avatar" :src="userInfo.imageUrl || '/static/default-avatar.jpg'"></image>
 
       <view class="user">
         <view class="user-info">

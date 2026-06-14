@@ -180,7 +180,7 @@ export default {
 
         .article-title {
           color: $uni-color-subtitle;
-          font-size: 30rpx;
+          font-size: $uni-font-size-article-comment;
           flex: 1;
         }
       }
@@ -188,7 +188,7 @@ export default {
   }
 
   .title {
-    font-size: 36rpx;
+    font-size: $uni-font-size-subtitle;
     color: $uni-color-subtitle;
     font-weight: bold;
   }

@@ -142,14 +142,14 @@
 				margin-left: 20rpx;
 
 				.name {
-					font-size: 50rpx;
+					font-size: 36rpx;
 					font-weight: bold;
 					margin-bottom: 15rpx;
 					color: #eef7f2;
 				}
 
 				.contents {
-					font-size: 35rpx;
+					font-size: 28rpx;
 				}
 			}
 		}
@@ -170,12 +170,14 @@
 
 				.tittle {
 					// font-weight: bold;
-					font-size: 45rpx;
+					font-size: 36rpx;
 				}
 
 				.content {
 					// width: 70%;
 					color: silver;
+					font-size: 28rpx;
+					line-height: 1.6;
 					overflow: hidden;
 					text-overflow: ellipsis;
 					white-space: nowrap;

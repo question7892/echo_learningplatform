@@ -1,23 +1,27 @@
 <template>
-  <view class="analysis">
+  <view class="analysis" :class="{ 'web-layout': isWeb }">
     <!-- 加载页 -->
     <u-loading-page :loading="loading"></u-loading-page>
 
     <!-- 答题卡 -->
-    <view class="analysis-card">
-      <view class="analysis-card-type">
-        <view class="title">作答情况</view>
-        <view class="right">正确</view>
-        <view class="mistake">错误</view>
+    <view class="answer-card">
+      <view class="card-header">
+        <text class="card-title">作答情况</text>
+        <view class="legend">
+          <view class="legend-item"><view class="dot correct"></view><text>正确</text></view>
+          <view class="legend-item"><view class="dot wrong"></view><text>错误</text></view>
+        </view>
       </view>
 
-      <!-- 答题情况 -->
-      <view class="analysis-card-list">
-        <view class="index" v-for="(item, index) in analysisList" :key="item.id" @click="selectCircle(index)">
+      <view class="answer-grid">
+        <view class="circle-wrap" v-for="(item, index) in analysisList" :key="item.id" @click="selectCircle(index)">
           <view
-            class="index-circle"
-            :style="{ backgroundColor: getCircleBgColor(item.isCorrect) }"
-            :class="[getCircleActiveClass(index, item.isCorrect)]"
+            class="circle"
+            :class="{
+              'is-correct': item.isCorrect,
+              'is-wrong': !item.isCorrect,
+              'is-active': index === activeIndex
+            }"
           >
             {{ index + 1 }}
           </view>
@@ -32,10 +36,14 @@
         <questionInfo :analysisData="analysisList[activeIndex]" @addWrongBook="addWrongBook"></questionInfo>
 
         <!-- 解析 -->
-        <view class="analysis-main-explain">
-          <view class="title">解析</view>
-          <view class="content">
-            {{ analysisList[activeIndex].hasAnalysis ? analysisList[activeIndex].analysis_content : "暂无解析" }}
+        <view class="explain-card">
+          <text class="explain-title">解析</text>
+          <text class="explain-content" v-if="analysisList[activeIndex].hasAnalysis">
+            {{ analysisList[activeIndex].analysis_content }}
+          </text>
+          <view class="explain-empty" v-else>
+            <text class="empty-text">暂无解析</text>
+            <text class="empty-hint">该题目暂未提供解析，可添加到错题本稍后复习</text>
           </view>
         </view>
       </view>
@@ -48,6 +56,9 @@
 <script>
 import { analysisList } from "@/mock/analysisList.js"
 export default {
+  props: {
+    isWeb: { type: Boolean, default: false }
+  },
   components: {},
   data: () => ({
     analysisList: [{}],
@@ -147,161 +158,145 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-view {
-  box-sizing: border-box;
-}
-
-@mixin before() {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-  transform: translate(0, -50%);
-  height: 80%;
-  width: 8rpx;
-  border-radius: 4rpx;
-  background-color: #2b85e4;
-}
+* { box-sizing: border-box; }
 
 .analysis {
   min-height: 100vh;
-  background-color: $uni-bg-color-grey;
-  padding: 20rpx;
+  background: #f0f2f5;
+  padding: 24rpx;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
 
+/* ====== 答题卡 ====== */
+.answer-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 28rpx 24rpx;
+  box-shadow: 0 2rpx 16rpx rgba(0,0,0,0.04);
+}
+.card-header {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+.card-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1e293b;
+  padding-left: 20rpx;
+  border-left: 6rpx solid #2b85e4;
+}
+.legend {
+  display: flex;
+  gap: 24rpx;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 22rpx;
+  color: #94a3b8;
+}
+.dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  &.correct { background: #22c55e; }
+  &.wrong { background: #ef4444; }
+}
 
-  &-card {
-    display: flex;
-    flex-direction: column;
+/* 答题圆圈网格 */
+.answer-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+.circle-wrap {
+  width: calc((100% - 4 * 16rpx) / 5);
+  display: flex;
+  justify-content: center;
+  padding: 10rpx 0;
+}
+.circle {
+  width: 68rpx;
+  height: 68rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #fff;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+.circle.is-correct { background: #22c55e; }
+.circle.is-wrong   { background: #ef4444; }
+.circle.is-active {
+  transform: scale(1.18);
+  box-shadow: 0 0 24rpx currentColor;
+}
+.circle.is-active.is-correct { box-shadow: 0 0 32rpx rgba(34,197,94,0.5); border: 3rpx solid #fff; }
+.circle.is-active.is-wrong   { box-shadow: 0 0 32rpx rgba(239,68,68,0.5); border: 3rpx solid #fff; }
 
-    // height: 300rpx;
-    padding: 20rpx;
-    background-color: #fff;
-    border-radius: 20rpx;
+/* ====== 题目 + 解析 ====== */
+.analysis-main {
+  margin-top: 24rpx;
+}
 
-    &-type {
-      display: flex;
-      align-items: center;
-      height: 60rpx;
-      margin-bottom: 20rpx;
+.explain-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 28rpx 24rpx;
+  margin-top: 24rpx;
+  box-shadow: 0 2rpx 16rpx rgba(0,0,0,0.04);
+}
+.explain-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1e293b;
+  padding-left: 20rpx;
+  border-left: 6rpx solid #2b85e4;
+  margin-bottom: 20rpx;
+}
+.explain-content {
+  display: block;
+  font-size: 28rpx;
+  color: #475569;
+  line-height: 1.8;
+  text-align: justify;
+}
+.explain-empty {
+  text-align: center;
+  padding: 40rpx 0;
+  .empty-text { display: block; font-size: 28rpx; color: #94a3b8; }
+  .empty-hint { display: block; font-size: 22rpx; color: #cbd5e1; margin-top: 8rpx; }
+}
 
-      .title {
-        position: relative;
-        font-size: 32rpx;
-        color: $uni-color-subtitle;
-        font-weight: 700;
-        padding-left: 30rpx;
+/* ====== Web 端适配 ====== */
+.web-layout {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 40px;
+  background: #f8fafc;
+  min-height: calc(100vh - 60px);
 
-        &::before {
-          @include before();
-        }
-      }
+  .answer-card { border-radius: 16px; padding: 28px 28px; }
+  .card-title { font-size: 18px; }
+  .card-header { margin-bottom: 20px; }
+  .legend-item { font-size: 13px; }
+  .dot { width: 12px; height: 12px; }
 
-      .right,
-      .mistake {
-        position: relative;
-        width: 120rpx;
-        text-align: center;
-        font-size: 26rpx;
-        color: $uni-text-color-disable;
-        &::before {
-          content: "";
-          position: absolute;
-          left: 0;
-          top: 50%;
-          transform: translateY(-50%);
-          width: 20rpx;
-          height: 20rpx;
-          border-radius: 50%;
-        }
-      }
-      .right {
-        margin-left: auto;
-        &::before {
-          background-color: #19be6b;
-        }
-      }
-      .mistake {
-        &::before {
-          background-color: #f56c6c;
-        }
-      }
-    }
+  .answer-grid { gap: 12px; }
+  .circle-wrap { width: calc((100% - 4 * 12px) / 5); padding: 8px 0; }
+  .circle { width: 52px; height: 52px; font-size: 20px; }
 
-    &-list {
-      flex: 1;
-      display: flex;
-      flex-flow: row wrap;
+  .analysis-main { margin-top: 20px; }
 
-      .index {
-        width: 20%;
-        min-height: 100rpx;
-        display: flex;
-        &-circle {
-          box-sizing: content-box;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-
-          margin: auto;
-          height: 65rpx;
-          width: 65rpx;
-          border-radius: 50%;
-          color: #fff;
-          font-size: 30rpx;
-          transition: all 0.2s;
-
-          &.active_correct,
-          &.active_worng {
-            width: 80rpx;
-            height: 80rpx;
-            border: 2rpx solid #fff;
-            font-size: 34rpx;
-            font-weight: bold;
-          }
-          &.active_correct {
-            box-shadow: #19be6b 0 0 40rpx;
-          }
-          &.active_worng {
-            box-shadow: #f56c6c 0 0 40rpx;
-          }
-        }
-      }
-    }
-  }
-
-  &-main {
-    margin-top: 40rpx;
-    &-explain {
-      background-color: #fff;
-      border-radius: 20rpx;
-      min-height: 200rpx;
-      margin-top: 40rpx;
-      padding: 20rpx;
-      transition: all 0.2s;
-
-      display: flex;
-      flex-direction: column;
-
-      .title {
-        position: relative;
-        font-size: 32rpx;
-        color: $uni-color-subtitle;
-        font-weight: 700;
-        padding-left: 30rpx;
-
-        &::before {
-          @include before();
-        }
-      }
-
-      .content {
-        margin-top: 20rpx;
-        font-size: 30rpx;
-        color: $uni-text-color-disable;
-      }
-    }
-  }
+  .explain-card { border-radius: 16px; padding: 28px; margin-top: 20px; }
+  .explain-title { font-size: 18px; border-left-width: 5px; margin-bottom: 16px; }
+  .explain-content { font-size: 16px; line-height: 1.9; }
 }
 </style>

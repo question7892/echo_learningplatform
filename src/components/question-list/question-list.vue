@@ -23,7 +23,7 @@
       </view>
     </view>
     <view v-else class="empty">
-      <u-empty class="empty" icon="http://cdn.uviewui.com/uview/empty/data.png" text="这里什么也没有"></u-empty>
+      <u-empty class="empty" mode="data" text="这里什么也没有"></u-empty>
     </view>
   </view>
 </template>

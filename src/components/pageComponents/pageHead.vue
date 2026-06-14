@@ -33,7 +33,7 @@
 			backMainPage() {
 				uni.navigateBack({
 					delta: 1,
-					animationType: 'slide-in-left',
+					animationType: 'none',
 					animationDuration: 200
 				});
 			}

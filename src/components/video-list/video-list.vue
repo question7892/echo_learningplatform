@@ -29,7 +29,7 @@
 
             <!-- 头部 -->
             <view class="video-list-item-header">
-              <u-avatar :src="item.avatar" size="30"></u-avatar>
+              <u-avatar :src="item.avatar || '/static/default-avatar.jpg'" size="30"></u-avatar>
               <view class="info">
                 <view class="info-name">{{ item.userName }}</view>
                 <view class="info-date" v-if="!isWeb">{{ $u.timeFrom(Date.parse(item.create_time), false) }}</view>
@@ -52,7 +52,7 @@
         </view>
       </view>
     </view>
-    <u-empty v-else class="empty" icon="http://cdn.uviewui.com/uview/empty/data.png" text="视频列表为空"></u-empty>
+    <u-empty v-else class="empty" mode="data" text="视频列表为空"></u-empty>
   </view>
 </template>
 
@@ -134,19 +134,20 @@ export default {
   display: flex; flex-direction: column;
   &-item {
     padding: 20rpx; padding-bottom: 0; display: flex; flex-direction: column; margin-bottom: 40rpx; background-color: #fff; border-radius: 30rpx;
+    box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.05);
     &-header {
       display: flex; align-items: center; height: 90rpx;
       .info { display: flex; justify-content: space-around; flex-direction: column; margin-left: 20rpx;
-        &-name { color: $uni-color-title; font-weight: bold; font-size: 32rpx; }
-        &-date { color: $uni-text-color-disable; font-size: 28rpx; }
+        &-name { color: $uni-color-title; font-weight: bold; font-size: $uni-font-size-article-comment; }
+        &-date { color: $uni-text-color-disable; font-size: $uni-font-size-article-meta; }
       }
     }
-    &-content { margin: 20rpx 0; color: $uni-color-paragraph; font-size: 32rpx; }
+    &-content { margin: 20rpx 0; color: $uni-color-paragraph; font-size: $uni-font-size-article-body; line-height: 1.6; }
     &-main { width: 100%; height: 400rpx; border: none; border-radius: 20rpx; }
     &-footer {
       display: flex; justify-content: space-between; align-items: center; min-height: 100rpx;
-      .visit { display: flex; align-items: center; &-placeholder { margin-left: 10rpx; color: $uni-text-color-placeholder; font-size: 28rpx; } }
-      .category_tip { font-size: 28rpx; color: $uni-text-color-placeholder; margin-right: 10rpx; }
+      .visit { display: flex; align-items: center; &-placeholder { margin-left: 10rpx; color: $uni-text-color-placeholder; font-size: $uni-font-size-article-meta; } }
+      .category_tip { font-size: $uni-font-size-article-meta; color: $uni-text-color-placeholder; margin-right: 10rpx; }
     }
   }
 }

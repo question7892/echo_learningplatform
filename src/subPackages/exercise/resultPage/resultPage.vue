@@ -1,71 +1,78 @@
 <template>
-  <view class="result">
-    <!-- 总览 -->
-    <view class="result-panel">
-      <view class="tip">数据分析</view>
+  <view class="result" :class="{ 'web-layout': isWeb }">
+    <!-- ====== 顶部概览卡片 ====== -->
+    <view class="overview-card">
+      <!-- 正确率圆环 -->
+      <view class="score-ring">
+        <view class="ring-inner">
+          <text class="score-num">{{ displayRate }}</text>
+          <text class="score-unit">分</text>
+          <text class="score-label">正确率</text>
+        </view>
+      </view>
 
-      <!-- 题目 -->
-      <view class="result-panel-question">
-        <view class="title">{{ answerReport.question.title }}</view>
-
-        <view class="info">
-          <my-tag class="tag" :type="getLevelColor(answerReport.question.level)" :circle="false" size="mini">
+      <!-- 题目信息 -->
+      <view class="question-meta">
+        <text class="q-title">{{ answerReport.question.title }}</text>
+        <view class="q-tags">
+          <my-tag :type="getLevelColor(answerReport.question.level)" :circle="false" size="mini">
             {{ answerReport.question.level }}
           </my-tag>
-          <my-tag class="tag" type="info" size="mini" v-for="tag in answerReport.question.tagList" :key="tag.tagId">
+          <my-tag type="info" size="mini" v-for="tag in answerReport.question.tagList" :key="tag.tagId">
             {{ tag.tag }}
           </my-tag>
-
-          <view class="pass">
-            <text class="pass-text">正确率：</text>
-            <text class="pass-rate">{{ answerReport.question.passRate + "%" }}</text>
-          </view>
         </view>
       </view>
+    </view>
 
-      <!-- chart -->
-      <view class="result-panel-chart">
-        <view class="result-panel-chart-lf">
-          <view class="circle">
-            <view class="sub-circle">
-              <text class="rate">{{ answerReport.passRate + ".00%" }}</text>
-              <text class="text">正确率</text>
-            </view>
-          </view>
-        </view>
+    <!-- ====== 统计面板 ====== -->
+    <view class="stats-row">
+      <view class="stat-item stat-total">
+        <text class="stat-num">{{ answerReport.totalNumber }}</text>
+        <text class="stat-label">共计</text>
+      </view>
+      <view class="stat-item stat-correct">
+        <text class="stat-num">{{ answerReport.correctNumber }}</text>
+        <text class="stat-label">答对</text>
+      </view>
+      <view class="stat-item stat-wrong">
+        <text class="stat-num">{{ answerReport.wrongNumber }}</text>
+        <text class="stat-label">答错</text>
+      </view>
+      <view class="stat-item stat-rate">
+        <text class="stat-num">{{ displayRate }}%</text>
+        <text class="stat-label">正确率</text>
+      </view>
+    </view>
 
-        <view class="result-panel-chart-case">
-          <view class="tip">作答情况</view>
-
-          <view class="list-item">
-            <text class="text">共计：</text>
-            <text class="num">{{ answerReport.totalNumber }}</text>
+    <!-- ====== 答题明细 ====== -->
+    <view class="answer-detail">
+      <view class="section-title">答题明细</view>
+      <view class="answer-grid">
+        <view
+          class="answer-cell"
+          v-for="(correctAnswer, index) in answerReport.answerList"
+          :key="index"
+          :class="{ correct: isCorrect(index), wrong: !isCorrect(index) }"
+        >
+          <view class="cell-index">{{ index + 1 }}</view>
+          <view class="cell-answers">
+            <text class="cell-correct">答案 {{ formatAnswer(correctAnswer) }}</text>
+            <text class="cell-yours" v-if="!isCorrect(index)">
+              你的 {{ formatAnswer(getUserAnswer(index)) }}
+            </text>
           </view>
-          <view class="list-item">
-            <text class="text">答对：</text>
-            <text class="num">{{ answerReport.correctNumber }}</text>
-          </view>
-          <view class="list-item">
-            <text class="text">答错：</text>
-            <text class="num">{{ answerReport.wrongNumber }}</text>
+          <view class="cell-badge" :class="{ right: isCorrect(index), err: !isCorrect(index) }">
+            {{ isCorrect(index) ? '✓' : '✗' }}
           </view>
         </view>
       </view>
     </view>
 
-    <!-- answers-list -->
-    <view class="result-answer-container">
-      <view class="tip">正确答案</view>
-      <view class="answer-list">
-        <view class="answer-list-item" v-for="(item, index) in answerReport.answerList" :key="index">
-          <text class="answer-list-item-index">{{ index + 1 + "." }}</text>
-          <text class="answer-list-item-option">{{ item }}</text>
-        </view>
-      </view>
+    <!-- 查看解析按钮 -->
+    <view class="btn-wrap">
+      <u-button text="查看解析" shape="circle" color="#19be6b" @click="gotoAnalysis"></u-button>
     </view>
-
-    <!-- 查看解析 -->
-    <u-button text="查看解析" shape="circle" color="#19be6b" @click="gotoAnalysis"></u-button>
   </view>
 </template>
 
@@ -103,7 +110,15 @@ export default {
       passRate: 11,
     },
   }),
+  props: {
+    isWeb: { type: Boolean, default: false }
+  },
   computed: {
+    // 正确率保留1位小数
+    displayRate() {
+      const rate = Number(this.answerReport.passRate)
+      return isNaN(rate) ? '0' : parseFloat(rate.toFixed(1))
+    },
     // 根据难度选择tag种类
     getLevelColor() {
       return level => {
@@ -121,6 +136,28 @@ export default {
     },
   },
   methods: {
+    // 判断某题是否答对
+    isCorrect(index) {
+      const correct = this.answerReport.answerList[index]
+      const user = this.answerSheet ? this.answerSheet[index] : null
+      if (user === null || user === undefined) return false
+      if (Array.isArray(correct)) {
+        if (!Array.isArray(user)) return false
+        if (correct.length !== user.length) return false
+        return correct.every(v => user.includes(v))
+      }
+      return String(user) === String(correct)
+    },
+    // 格式化答案显示
+    formatAnswer(answer) {
+      return Array.isArray(answer) ? answer.join('') : String(answer)
+    },
+    // 获取用户答案
+    getUserAnswer(index) {
+      const user = this.answerSheet ? this.answerSheet[index] : null
+      if (user === null || user === undefined) return '未作答'
+      return Array.isArray(user) ? user.join('') : String(user)
+    },
     gotoAnalysis() {
       const questionGroupInfo = {
         QuestionSetId: this.answerReport.question.id,
@@ -144,228 +181,255 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-view {
-  box-sizing: border-box;
-}
-@mixin before($bgColor: #2b85e4) {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-  transform: translate(0, -50%);
-  height: 80%;
-  width: 8rpx;
-  border-radius: 4rpx;
-  background-color: $bgColor;
-}
-
-$chart_panel: 600rpx;
-$case_panel: 220rpx;
-$answer_panel: 340rpx;
+* { box-sizing: border-box; }
 
 .result {
   min-height: 100vh;
-  background-color: $uni-bg-color-grey;
-  padding: 20rpx;
+  background: #f0f2f5;
+  padding: 24rpx;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
 
+/* ====== 顶部概览卡片 ====== */
+.overview-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 40rpx 32rpx;
+  display: flex;
+  align-items: center;
+  gap: 32rpx;
+  box-shadow: 0 2rpx 16rpx rgba(0,0,0,0.04);
+}
+
+/* 正确率圆环 */
+.score-ring {
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2af598 0%, #009efd 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  box-shadow: 0 8rpx 24rpx rgba(0,158,253,0.25);
+}
+.ring-inner {
+  width: 75%;
+  height: 75%;
+  border-radius: 50%;
+  background: #fff;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.score-num {
+  font-size: 52rpx;
+  font-weight: 800;
+  color: #1a9a5a;
+  line-height: 1;
+}
+.score-unit {
+  font-size: 22rpx;
+  color: #999;
+  margin-top: 2rpx;
+}
+.score-label {
+  font-size: 20rpx;
+  color: #999;
+  margin-top: 4rpx;
+}
 
-  &-panel {
-    background-color: #fff;
-    min-height: $chart_panel;
-    border-radius: 20rpx;
-    overflow: hidden;
+/* 题目信息 */
+.question-meta {
+  flex: 1;
+  min-width: 0;
+}
+.q-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.5;
+  display: block;
+  margin-bottom: 16rpx;
+}
+.q-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  align-items: center;
+}
 
-    display: flex;
-    flex-direction: column;
+/* ====== 统计行 ====== */
+.stats-row {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 20rpx;
+}
+.stat-item {
+  flex: 1;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 28rpx 16rpx;
+  text-align: center;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.03);
+}
+.stat-num {
+  display: block;
+  font-size: 40rpx;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.stat-label {
+  display: block;
+  font-size: 22rpx;
+  color: #94a3b8;
+  margin-top: 6rpx;
+}
+.stat-total .stat-num { color: #3b82f6; }
+.stat-correct .stat-num { color: #22c55e; }
+.stat-wrong .stat-num { color: #ef4444; }
+.stat-rate .stat-num { color: #8b5cf6; }
 
-    .tip {
-      position: relative;
-      margin: 20rpx;
-      margin-bottom: 0;
-      font-size: 32rpx;
-      color: $uni-color-subtitle;
-      font-weight: 700;
-      padding-left: 30rpx;
+/* ====== 答题明细 ====== */
+.answer-detail {
+  background: #fff;
+  border-radius: 20rpx;
+  margin-top: 20rpx;
+  padding: 32rpx 24rpx;
+  box-shadow: 0 2rpx 16rpx rgba(0,0,0,0.04);
+}
+.section-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1e293b;
+  padding-left: 20rpx;
+  margin-bottom: 24rpx;
+  border-left: 6rpx solid #2b85e4;
+}
+.answer-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
 
-      &::before {
-        @include before();
-      }
-    }
+/* 单个答案行 */
+.answer-cell {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 20rpx;
+  border-radius: 14rpx;
+  background: #f8fafc;
+  transition: background 0.2s;
+}
+.answer-cell.correct { background: #f0fdf4; }
+.answer-cell.wrong { background: #fef2f2; }
 
-    &-question {
-      display: flex;
-      flex-direction: column;
+.cell-index {
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+.answer-cell.correct .cell-index { background: #22c55e; }
+.answer-cell.wrong .cell-index { background: #ef4444; }
 
-      padding: 20rpx;
-      border-bottom: 1rpx solid #f4f4f5;
+.cell-answers {
+  flex: 1;
+  margin-left: 20rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+.cell-correct {
+  font-size: 28rpx;
+  color: #16a34a;
+  font-weight: 600;
+}
+.cell-yours {
+  font-size: 22rpx;
+  color: #dc2626;
+}
 
-      .title {
-        margin-bottom: 20rpx;
-        color: $uni-color-paragraph;
-        font-weight: 700;
-      }
+.cell-badge {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.cell-badge.right { background: #dcfce7; color: #16a34a; }
+.cell-badge.err { background: #fee2e2; color: #dc2626; }
 
-      .info {
-        display: flex;
-        align-items: center;
-
-        .tag {
-          margin-right: 20rpx;
-        }
-
-        .pass {
-          margin-left: auto;
-          font-size: 24rpx;
-          color: $uni-text-color-placeholder;
-          &-rate {
-            color: $uni-color-success;
-          }
-        }
-      }
-    }
-
-    &-chart {
-      flex: 1;
-      display: flex;
-
-      &-lf {
-        flex: 3;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        .circle {
-          width: 300rpx;
-          height: 300rpx;
-          border-radius: 50%;
-          background-image: linear-gradient(120deg, #2af598 0%, #009efd 100%);
-          box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          .sub-circle {
-            width: 75%;
-            height: 75%;
-            border-radius: 50%;
-            background-color: #fff;
-
-            display: flex;
-            flex-direction: column;
-            justify-content: space-evenly;
-            align-items: center;
-            padding: 60rpx 0;
-
-            .rate {
-              font-size: 45rpx;
-              font-weight: 700;
-              color: $uni-color-success;
-            }
-            .text {
-              font-size: 30rpx;
-              color: $uni-color-paragraph;
-              font-weight: 700;
-            }
-          }
-        }
-      }
-
-      &-case {
-        flex: 2;
-
-        .tip {
-          position: relative;
-          margin: 30rpx 0;
-          font-size: 32rpx;
-          color: $uni-color-subtitle;
-          font-weight: 700;
-          padding-left: 30rpx;
-
-          &::before {
-            @include before();
-          }
-        }
-
-        .list-item {
-          margin: 40rpx 0;
-          padding-left: 10rpx;
-
-          .text {
-            color: $uni-text-color-placeholder;
-            margin-right: 20rpx;
-          }
-
-          .num {
-            font-size: 35rpx;
-          }
-
-          &:nth-of-type(3) .num {
-            color: $uni-color-success;
-          }
-          &:nth-of-type(4) .num {
-            color: $uni-color-error;
-          }
-        }
-      }
-    }
-  }
-
-  &-answer-container {
-    display: flex;
-    flex-direction: column;
-    min-height: $answer_panel;
-    padding: 20rpx;
-
-    margin-top: 40rpx;
-    border-radius: 20rpx;
-    overflow: hidden;
-    background-color: #fff;
-    .tip {
-      position: relative;
-      margin-bottom: 20rpx;
-      font-size: 32rpx;
-      color: $uni-color-subtitle;
-      font-weight: 700;
-      padding-left: 30rpx;
-
-      &::before {
-        @include before();
-      }
-    }
-
-    .answer-list {
-      flex: 1;
-      display: flex;
-      flex-wrap: wrap;
-      align-content: space-between;
-      // padding: 20rpx;
-      &-item {
-        width: 20%;
-        height: 100rpx;
-
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
-        align-items: center;
-
-        &-index {
-          color: $uni-text-color-placeholder;
-        }
-        &-option {
-          color: #19be6b;
-          font-size: 32rpx;
-          font-weight: 600;
-        }
-      }
-    }
-  }
-
+/* 查看解析按钮 */
+.btn-wrap {
+  margin-top: 40rpx;
+  padding-bottom: 60rpx;
+  display: flex;
+  justify-content: center;
   ::v-deep .u-button {
-    margin-top: auto;
-    margin-bottom: 40rpx;
-    width: 90%;
+    width: 400rpx;
+    height: 80rpx;
+    font-size: 30rpx;
+    font-weight: 600;
+    letter-spacing: 2rpx;
+  }
+}
+
+/* ====== Web 端适配 ====== */
+.web-layout {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 40px;
+  background: #f8fafc;
+  min-height: calc(100vh - 60px);
+
+  .overview-card {
+    padding: 40px 36px;
+    border-radius: 16px;
+  }
+  .score-ring {
+    width: 140px;
+    height: 140px;
+  }
+  .score-num { font-size: 40px; }
+  .score-unit { font-size: 14px; }
+  .score-label { font-size: 13px; }
+
+  .q-title { font-size: 19px; margin-bottom: 14px; }
+
+  .stats-row { gap: 16px; margin-top: 20px; }
+  .stat-item { padding: 24px 20px; border-radius: 14px; }
+  .stat-num { font-size: 30px; }
+  .stat-label { font-size: 14px; }
+
+  .answer-detail { border-radius: 16px; padding: 32px 28px; }
+  .section-title { font-size: 18px; margin-bottom: 20px; }
+  .answer-grid { gap: 10px; }
+  .answer-cell { padding: 16px 20px; border-radius: 12px; }
+  .cell-index { width: 40px; height: 40px; font-size: 18px; }
+  .cell-correct { font-size: 16px; }
+  .cell-yours { font-size: 13px; }
+  .cell-badge { width: 36px; height: 36px; font-size: 20px; }
+
+  .btn-wrap {
+    margin-top: 36px;
+    padding-bottom: 40px;
+    ::v-deep .u-button {
+      width: 320px;
+      height: 52px;
+      font-size: 17px;
+    }
   }
 }
 </style>

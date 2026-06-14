@@ -1,22 +1,21 @@
 <template>
-  <view class="question-cate-detail">
+  <view class="question-cate-detail" :class="{ 'web-layout': isWeb }">
     <!-- 页面头部 -->
     <view class="cate-header" :style="{ paddingTop: navHeight + 'px', backgroundImage: categoryConfig.bgColor }">
       <!-- 描述 -->
       <view class="cate-header-desc">
         <view class="t-icon" :class="[categoryConfig.icon]"></view>
-
         <view class="cate-header-desc-rg">
           <view class="title">{{ categoryConfig.headLine }}</view>
-          <view class="content">{{ categoryConfig.desc }}</view>
+          <view class="desc-text">{{ categoryConfig.desc }}</view>
         </view>
       </view>
 
       <!-- 头部白框 -->
-      <view class="cate-header-title">
-        <view class="cate-header-title-tip">题组列表</view>
-        <view class="cate-header-title-search">
-          <u-search placeholder="搜索题目" :showAction="false" :height="rpxToPx(50)" clearabled></u-search>
+      <view class="cate-header-bar">
+        <text class="bar-title">题组列表</text>
+        <view class="bar-search">
+          <u-search placeholder="搜索题目" :showAction="false" clearabled></u-search>
         </view>
       </view>
     </view>
@@ -24,8 +23,6 @@
     <!-- 主体 -->
     <view class="cate-main">
       <question-list :questionList="questionList" ref="questionList"></question-list>
-
-      <!-- 加载更多 -->
       <u-loadmore :status="status" loadingText="一大波题目正在赶来" nomoreText="~没有更多了~" />
     </view>
   </view>
@@ -36,6 +33,9 @@ import { systemInfo } from "@/mixin.js"
 import { questionList } from "@/mock/questionList.js"
 import categories from "./categories.js"
 export default {
+  props: {
+    isWeb: { type: Boolean, default: false }
+  },
   components: {},
   mixins: [systemInfo],
   data: () => ({
@@ -121,102 +121,130 @@ export default {
 }
 </script>
 
-<style lang="scss">
-view {
-  box-sizing: border-box;
-}
+<style lang="scss" scoped>
+* { box-sizing: border-box; }
 
-@mixin fixed() {
-  position: fixed;
-  top: 0;
-  left: 0;
-}
-
-$header: 500rpx;
-$header_title: 100rpx;
+$header: 480rpx;
+$bar: 100rpx;
 
 .question-cate-detail {
   min-height: 100vh;
-  background-color: $uni-bg-color-grey;
+  background: #f0f2f5;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 .cate-header {
-  @include fixed();
+  position: fixed;
+  top: 0;
+  left: 0;
   z-index: 99;
-
-  height: $header;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  // background-image: linear-gradient(to bottom, #fa709a 0%, #fee140 100%);
-  // background-image: linear-gradient(to top, #00c6fb 0%, #005bea 100%);
-  // background-image: linear-gradient(to bottom, #43e97b 0%, #38f9d7 100%);
+}
 
-  &-desc {
-    flex: 1;
-    padding: 0 20rpx;
-    display: flex;
-    align-items: center;
-    .t-icon {
-      margin-right: 40rpx;
-    }
-    .t-icon-race {
-      width: 200rpx;
-      height: 200rpx;
-    }
-    .t-icon-algo {
-      width: 180rpx;
-      height: 180rpx;
-    }
-    .t-icon-advance {
-      width: 160rpx;
-      height: 160rpx;
-    }
+.cate-header-desc {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 40rpx 32rpx;
+  height: calc($header - $bar);
+  .t-icon { margin-right: 32rpx; flex-shrink: 0; }
+  .t-icon-race  { width: 180rpx; height: 180rpx; }
+  .t-icon-algo   { width: 160rpx; height: 160rpx; }
+  .t-icon-advance { width: 140rpx; height: 140rpx; }
+}
 
-    &-rg {
-      height: 100%;
-      width: 60%;
-
-      display: flex;
-      flex-direction: column;
-
-      .title {
-        font-size: 40rpx;
-        font-weight: 800;
-        color: #fff;
-        letter-spacing: 10rpx;
-        margin-top: 40rpx;
-      }
-      .content {
-        margin-top: 20rpx;
-        font-size: 28rpx;
-        color: #ffffff;
-      }
-    }
+.cate-header-desc-rg {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  .title {
+    font-size: 44rpx;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 6rpx;
+    margin-bottom: 16rpx;
+    text-shadow: 0 2rpx 8rpx rgba(0,0,0,0.15);
   }
+  .desc-text {
+    font-size: 26rpx;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.5;
+  }
+}
 
-  &-title {
-    height: $header_title;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20rpx 40rpx;
-    background-color: #fff;
-    border-bottom: 2rpx solid #f3f4f6;
-    border-radius: 40rpx 40rpx 0 0;
-
-    &-tip {
-      font-size: 36rpx;
-      font-weight: 700;
+.cate-header-bar {
+  height: $bar;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32rpx;
+  background: #fff;
+  border-radius: 32rpx 32rpx 0 0;
+  .bar-title {
+    font-size: 34rpx;
+    font-weight: 700;
+    color: #1e293b;
+  }
+  .bar-search {
+    width: 35%;
+    ::v-deep .u-search__content {
+      height: 52rpx !important;
     }
-
-    &-search {
-      width: 40%;
+    ::v-deep .uni-input-input {
+      font-size: 24rpx !important;
     }
   }
 }
 
 .cate-main {
   padding-top: $header;
+  padding-left: 20rpx;
+  padding-right: 20rpx;
+}
+
+/* ====== Web 端适配 ====== */
+.web-layout {
+  .cate-header {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+    border-radius: 20px 20px 0 0;
+    overflow: hidden;
+  }
+  .cate-header-desc {
+    padding: 48px 40px;
+    height: auto;
+    min-height: 200px;
+    .t-icon-race  { width: 140px; height: 140px; }
+    .t-icon-algo   { width: 120px; height: 120px; }
+    .t-icon-advance { width: 110px; height: 110px; }
+  }
+  .cate-header-desc-rg {
+    .title { font-size: 30px; letter-spacing: 4px; color: #fff; }
+    .desc-text { font-size: 15px; }
+  }
+  .cate-header-bar {
+    height: 56px;
+    padding: 0 28px;
+    border-radius: 20px 20px 0 0;
+    .bar-title { font-size: 18px; }
+    .bar-search {
+      width: 200px;
+      ::v-deep .u-search__content {
+        height: 34px !important;
+      }
+      ::v-deep .uni-input-input {
+        font-size: 13px !important;
+      }
+    }
+  }
+
+  .cate-main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px 28px 60px;
+  }
 }
 </style>

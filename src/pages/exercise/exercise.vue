@@ -49,7 +49,7 @@
             <view class="list-header">
               <view class="result-count">共计 {{ questionList.length }} 道题目</view>
               <view class="web-search">
-                <u-search placeholder="搜索感兴趣的题目..." :showAction="false"></u-search>
+                <u-search placeholder="搜索题目..." :showAction="false"></u-search>
               </view>
             </view>
             
@@ -135,24 +135,27 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+* { box-sizing: border-box; }
+
 /* #ifdef H5 */
 .web-exercise {
   background-color: #f8fafc;
   min-height: calc(100vh - 60px);
   padding: 40px 0;
-  
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
   .web-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
   }
-  
+
   .difficulty-grid {
     display: grid;
     grid-template-columns: 1.5fr 1fr 1fr;
     gap: 24px;
     margin-bottom: 40px;
-    
+
     .diff-card {
       height: 180px;
       border-radius: 20px;
@@ -163,24 +166,37 @@ export default {
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       color: #fff;
-      
-      &:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
-      
-      .card-title { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
-      .card-desc { font-size: 14px; opacity: 0.9; }
-      
-      .t-icon { width: 80px; height: 80px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2)); }
-      
+      position: relative;
+      overflow: hidden;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -30%;
+        width: 200px;
+        height: 200px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 50%;
+      }
+
+      &:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.12); }
+
+      .card-title { font-size: 20px; font-weight: 700; margin-bottom: 10px; position: relative; z-index: 1; }
+      .card-desc { font-size: 14px; opacity: 0.9; position: relative; z-index: 1; }
+
+      .t-icon { width: 80px; height: 80px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2)); position: relative; z-index: 1; }
+
       &.basic { background: linear-gradient(135deg, #00c6fb 0%, #005bea 100%); }
-      &.advance { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
-      &.race { background: linear-gradient(135deg, #fee140 0%, #fa709a 100%); }
+      &.advance { background: linear-gradient(135deg, #43e97b 0%, #16a34a 100%); }
+      &.race { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
     }
   }
-  
+
   .web-main {
     display: flex;
     gap: 30px;
-    
+
     .web-side {
       width: 240px;
       background: #fff;
@@ -190,7 +206,7 @@ export default {
       top: 80px;
       align-self: flex-start;
       box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-      
+
       .side-title { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 20px; }
       .side-nav-item {
         padding: 12px 20px;
@@ -204,7 +220,7 @@ export default {
         &:hover:not(.active) { background: #f8fafc; color: #1e293b; }
       }
     }
-    
+
     .web-content {
       flex: 1;
       .list-header {
@@ -213,7 +229,15 @@ export default {
         align-items: center;
         margin-bottom: 24px;
         .result-count { color: #94a3b8; font-size: 14px; }
-        .web-search { width: 300px; }
+        .web-search {
+          width: 220px;
+          ::v-deep .u-search__content {
+            height: 34px !important;
+          }
+          ::v-deep .uni-input-input {
+            font-size: 13px !important;
+          }
+        }
       }
       .web-loadmore { margin-top: 40px; padding-bottom: 60px; }
     }
@@ -222,28 +246,100 @@ export default {
 /* #endif */
 
 /* #ifndef H5 */
-$module: 400rpx; $tab: 100rpx;
+$module: 400rpx;
+$tab: 100rpx;
+
 .exercise {
-  height: 100vh; background-color: $uni-bg-color-grey; box-sizing: border-box;
+  height: 100vh;
+  background: #f0f2f5;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
   .exercise-module {
-    display: flex; justify-content: space-between; height: $module; background-color: #fff; padding: 30rpx; box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    height: $module;
+    padding: 24rpx;
+    background: transparent;
+
     &-lf {
-      flex: 3; background-image: linear-gradient(to top, #00c6fb 0%, #005bea 100%); margin-right: 40rpx; border-radius: 20rpx; padding: 20rpx; display: flex; flex-direction: column; align-items: center; justify-content: space-around;
-      .title { color: #fff; font-weight: bold; letter-spacing: 6rpx; font-size: 45rpx; }
-      .t-icon-algo { width: 140rpx; height: 140rpx; }
+      flex: 3;
+      margin-right: 24rpx;
+      border-radius: 24rpx;
+      padding: 32rpx 24rpx;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20rpx;
+      background: linear-gradient(135deg, #00c6fb 0%, #005bea 100%);
+      box-shadow: 0 8rpx 24rpx rgba(0,91,234,0.25);
+      .title {
+        color: #fff;
+        font-weight: 800;
+        font-size: 40rpx;
+        letter-spacing: 4rpx;
+        text-shadow: 0 2rpx 8rpx rgba(0,0,0,0.15);
+      }
+      .t-icon-algo { width: 130rpx; height: 130rpx; filter: drop-shadow(0 4rpx 12rpx rgba(0,0,0,0.2)); }
     }
+
     &-rg {
-      flex: 4; display: flex; flex-direction: column;
-      .rg-top, .rg-bottom { flex: 1; display: flex; justify-content: space-around; align-items: center; padding: 20rpx 40rpx; border-radius: 20rpx; }
-      .title { color: #fff; width: 40%; letter-spacing: 6rpx; font-weight: bold; font-size: 40rpx; }
-      .rg-top { background-image: linear-gradient(to right, #43e97b 0%, #38f9d7 100%); margin-bottom: 20rpx; .t-icon-advance { width: 100rpx; height: 100rpx; } }
-      .rg-bottom { background-image: linear-gradient(to right, #fee140 0%, #fa709a 100%); .t-icon-race { width: 120rpx; height: 120rpx; } }
+      flex: 4;
+      display: flex;
+      flex-direction: column;
+      gap: 24rpx;
+
+      .rg-top, .rg-bottom {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 24rpx 36rpx;
+        border-radius: 24rpx;
+        box-shadow: 0 6rpx 20rpx rgba(0,0,0,0.1);
+      }
+      .title {
+        color: #fff;
+        font-weight: 800;
+        font-size: 36rpx;
+        letter-spacing: 4rpx;
+        text-shadow: 0 2rpx 6rpx rgba(0,0,0,0.12);
+      }
+      .rg-top {
+        background: linear-gradient(135deg, #43e97b 0%, #16a34a 100%);
+        .t-icon-advance { width: 90rpx; height: 90rpx; filter: drop-shadow(0 4rpx 12rpx rgba(0,0,0,0.2)); }
+      }
+      .rg-bottom {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        .t-icon-race { width: 110rpx; height: 110rpx; filter: drop-shadow(0 4rpx 12rpx rgba(0,0,0,0.2)); }
+      }
     }
   }
+
   .exercise-tab {
-    height: $tab; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; background-color: #fff; border-bottom: 2rpx solid #f3f4f6; padding: 0 20rpx; margin-top: 20rpx;
-    .search { width: 45%; }
-    .tag-group { display: flex; justify-content: flex-end; align-items: center; .tag { margin-right: 20rpx; } }
+    height: $tab;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 0 24rpx;
+    margin-top: 20rpx;
+    border-radius: 20rpx 20rpx 0 0;
+    .search {
+      width: 42%;
+      ::v-deep .u-search__content {
+        height: 56rpx !important;
+      }
+      ::v-deep .uni-input-input {
+        font-size: 24rpx !important;
+      }
+    }
+    .tag-group {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12rpx;
+    }
   }
 }
 /* #endif */
