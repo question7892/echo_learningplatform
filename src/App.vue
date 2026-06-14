@@ -78,6 +78,13 @@ html, body {
     padding-top: 60px !important;
   }
 
+  /* 固定页面标题栏（题库、社区等），不随页面滚动 */
+  uni-page-head, .uni-page-head {
+    position: sticky !important;
+    top: 60px !important;
+    z-index: 998 !important;
+  }
+
   /* 页面主体内容约束 - 真正的 Web 门户感 */
   uni-page-body {
     background-color: #fff !important;

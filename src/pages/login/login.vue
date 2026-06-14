@@ -129,26 +129,25 @@ export default {
     .hero-content {
       max-width: 500px;
       .hero-logo {
-        font-size: 48px;
+        font-size: 34px;
         font-weight: 800;
         margin-bottom: 24px;
         letter-spacing: -1px;
       }
       .hero-title {
-        font-size: 36px;
+        font-size: 26px;
         font-weight: 600;
-        margin-bottom: 16px;
+        margin-bottom: 14px;
       }
       .hero-desc {
-        font-size: 18px;
+        font-size: 15px;
         opacity: 0.9;
         line-height: 1.6;
-        margin-bottom: 40px;
+        margin-bottom: 32px;
       }
       .hero-features {
         .feature-item {
-          font-size: 16px;
-          margin-bottom: 12px;
+          font-size: 14px;
           display: flex;
           align-items: center;
         }
@@ -174,7 +173,7 @@ export default {
       .card-header {
         margin-bottom: 40px;
         .card-title {
-          font-size: 28px;
+          font-size: 24px;
           font-weight: 700;
           color: #1e293b;
           margin-bottom: 8px;

@@ -4,8 +4,8 @@ const BASE_URL = "http://59.110.163.182"
 // add token
 function addToken(args) {
   if (uni.getStorageSync("token")) {
-    if (args.header) return (args.header.authorization = uni.getStorageSync("token"))
-    args.header = { authorization: uni.getStorageSync("token") }
+    if (args.header) return (args.header.token = uni.getStorageSync("token"))
+    args.header = { token: uni.getStorageSync("token") }
   }
 }
 

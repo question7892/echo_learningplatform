@@ -112,6 +112,9 @@
 		display: flex;
 		flex-direction: column;
 		gap: 20px;
+		position: sticky;
+		top: 80px;
+		align-self: flex-start;
 		
 		.side-nav-card, .my-communities {
 			background: #fff;
@@ -180,6 +183,9 @@
 		display: flex;
 		flex-direction: column;
 		gap: 20px;
+		position: sticky;
+		top: 80px;
+		align-self: flex-start;
 		
 		.notice-card, .hot-topics {
 			background: #fff;

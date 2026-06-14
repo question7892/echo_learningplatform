@@ -58,7 +58,7 @@ export default {
       }
       
       .container-todTime, .container-weekTime {
-        font-size: 24px;
+        font-size: 20px;
         font-weight: 700;
         color: #1e293b;
       }

@@ -104,7 +104,7 @@ export default {
       .article-list-item-header {
         height: auto !important;
         margin-bottom: 15px !important;
-        .title .text { font-size: 18px !important; color: #1e293b; }
+        .title .text { font-size: 16px !important; color: #1e293b; }
         .title .user-info .name { font-size: 13px !important; color: #64748b; }
       }
       

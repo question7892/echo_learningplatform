@@ -68,7 +68,7 @@ export default {
       
       &:hover { border-color: #17ead9; box-shadow: 0 8px 16px rgba(0,0,0,0.04); transform: translateY(-3px); }
       
-      .title { font-size: 18px !important; color: #1e293b; margin-bottom: 20px !important; }
+      .title { font-size: 16px !important; color: #1e293b; margin-bottom: 20px !important; }
       
       .info { margin-top: auto; }
       
