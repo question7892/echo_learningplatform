@@ -89,7 +89,7 @@ export default {
         const { code } = await uni.login({ provider: "weixin" })
         const { data: res } = await uni.request({
           url: "/wechat/login",
-          method: "GET",
+          method: "POST",
           data: { code: code, nickName: userInfo.nickName, avatarUrl: userInfo.avatarUrl },
         })
         if (res.status !== "200") return uni.$u.toast("登录失败")

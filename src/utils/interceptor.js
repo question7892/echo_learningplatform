@@ -23,7 +23,7 @@ uni.addInterceptor("request", {
   // 响应拦截
   success({ data: res }) {
     // 无token、token无效、token过期
-    if (res.status === "511") {
+    if (res.status == 511 || (res.status == 500 && res.message && res.message.includes("token"))) {
       uni.reLaunch({ url: "/pages/login/login" })
     }
   },

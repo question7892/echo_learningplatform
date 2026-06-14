@@ -19,11 +19,11 @@
         <view class="card-content">
           <!-- 头部 ,头像，标题，时间-->
           <view class="article-list-item-header">
-            <u-avatar :src="item.user.imageUrl" fontSize="16" size="40"></u-avatar>
+            <u-avatar :src="item.user ? item.user.imageUrl : ''" fontSize="16" size="40"></u-avatar>
             <view class="title">
               <view class="text u-line-1">{{ item.title }}</view>
               <view class="user-info">
-                <view class="name">{{ item.user.nickName }}</view>
+                <view class="name">{{ item.user ? item.user.nickName : '匿名' }}</view>
               </view>
             </view>
           </view>
@@ -33,7 +33,7 @@
             <view class="content">
               <view class="content-text u-line-2">{{ item.content }}</view>
               <view class="content-tags">
-                <my-tag class="tag" size="mini" type="success" v-for="(tag, index) in item.tag" :key="index">{{ tag }}</my-tag>
+                <my-tag class="tag" size="mini" type="success" v-for="(tag, index) in (item.tag || [])" :key="index">{{ tag }}</my-tag>
               </view>
             </view>
             <u-image v-if="item.coverImgUrl" :showLoading="true" :src="item.coverImgUrl" width="160rpx" height="120rpx" radius="6px"></u-image>
@@ -48,7 +48,7 @@
           <view class="article-list-item-footer">
             <view class="date" v-if="!isWeb">{{ $u.timeFrom(Date.parse(item.create_time), false) }}</view>
             <view class="web-footer-left" v-if="isWeb">
-                <my-tag class="tag" size="mini" type="primary" v-for="(tag, index) in item.tag" :key="index">{{ tag }}</my-tag>
+                <my-tag class="tag" size="mini" type="primary" v-for="(tag, index) in (item.tag || [])" :key="index">{{ tag }}</my-tag>
             </view>
             <view class="stats">
               <view class="icon"> <u-icon name="eye" size="18"></u-icon> <text>{{ item.visitNumber }}</text> </view>

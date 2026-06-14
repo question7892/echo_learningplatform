@@ -139,8 +139,8 @@ export default {
 
         const { data: res } = await uni.request({
           url: "/wechat/user/login",
-          method: "GET",
-          data: { loginAct: accountInfo.userName, passWord: accountInfo.password },
+          method: "POST",
+          data: { loginAct: accountInfo.userName, password: accountInfo.password },
         })
         console.log(res)
         if (res.status !== "200") return this.$refs.uToast.show({ type: "error", message: "登录失败" })
@@ -165,7 +165,7 @@ export default {
 
         const { data: res } = await uni.request({
           url: "/wechat/user/login/phone",
-          method: "GET",
+          method: "POST",
           data: { userPhone: phoneInfo.phone, code: phoneInfo.code },
         })
         console.log(res)
