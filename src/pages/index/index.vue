@@ -203,6 +203,12 @@ export default {
   onLoad() {
     this.getArticleList(this.unRecommendHot)
   },
+  onShow() {
+    // Refresh article list when returning to the page
+    this.contentObj.articleList.data = []
+    this.contentObj.articleList.paramsData.currentPage = 1
+    this.getArticleList(this.unRecommendHot)
+  },
 }
 </script>
 

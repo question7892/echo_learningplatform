@@ -9,6 +9,7 @@
               class="video-list-item-main"
               muted
               loop
+              controls
               :id="`myVideo${item.uuid}`"
               :autoplay="false"
               :show-center-play-btn="true"

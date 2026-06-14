@@ -172,24 +172,30 @@ export default {
         const invitationId = res.data
 
         // 上传多张图片
-        let flag = false // 是否为文章封面
-        form.imgList.forEach(async (item, index) => {
-          if (index === 0) flag = true
-          const { data, statusCode } = await uni.uploadFile({
-            url: "/index/add/one/essay/image",
-            filePath: item.url,
-            name: "file",
-            fileType: "image",
-            formData: { flag: flag.toString(), invitationId: invitationId },
+        if (!form.imgList || form.imgList.length === 0) {
+          this.$refs.uToast.show({ type: "success", message: "已提交，请等待管理员审核" })
+          setTimeout(() => {
+            uni.navigateBack()
+          }, 1000)
+        } else {
+          form.imgList.forEach(async (item, index) => {
+            if (index === 0) flag = true
+            const { data, statusCode } = await uni.uploadFile({
+              url: "/index/add/one/essay/image",
+              filePath: item.url,
+              name: "file",
+              fileType: "image",
+              formData: { flag: flag.toString(), invitationId: invitationId },
+            })
+            flag = false
+            if (statusCode === 200 && index === form.imgList.length - 1) {
+              this.$refs.uToast.show({ type: "success", message: "已提交，请等待管理员审核" })
+              setTimeout(() => {
+                uni.navigateBack()
+              }, 1000)
+            }
           })
-          flag = false
-          if (statusCode === 200 && index === form.imgList.length - 1) {
-            this.$refs.uToast.show({ type: "success", message: "已提交，请等待管理员审核" })
-            setTimeout(() => {
-              uni.navigateBack()
-            }, 1000)
-          }
-        })
+        }
       } catch (err) {
         console.error(err)
         uni.$u.toast("服务器异常")

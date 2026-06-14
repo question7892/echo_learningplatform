@@ -89,7 +89,40 @@ export default {
       })
       downloadTask.onProgressUpdate(({ progress }) => { this.fileStatusObject[id].progress = progress })
     },
-    async openFile(id, url) { /* ... */ }
+    async openFile(id, url) {
+      // #ifdef H5
+      window.open(url, "_blank")
+      // #endif
+
+      // #ifndef H5
+      uni.showLoading({ title: "正在加载文件" })
+      uni.downloadFile({
+        url: url,
+        success: (res) => {
+          if (res.statusCode === 200) {
+            uni.openDocument({
+              filePath: res.tempFilePath,
+              success: () => {
+                console.log("打开文档成功")
+              },
+              fail: (err) => {
+                console.error(err)
+                uni.$u.toast("暂不支持预览该格式或文件损坏")
+              }
+            })
+          } else {
+            uni.$u.toast("文件加载失败")
+          }
+        },
+        fail: () => {
+          uni.$u.toast("网络异常，无法加载文件")
+        },
+        complete: () => {
+          uni.hideLoading()
+        }
+      })
+      // #endif
+    }
   },
   mounted() { this.getSavedFileList(); this.fileStatusListInit(); }
 }
