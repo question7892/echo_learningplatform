@@ -89,7 +89,7 @@
 
 <script>
 import ArticleComment from "../components/article-comment.vue"
-import { commentList } from "@/mock/commentList.js"
+
 
 export default {
   components: { ArticleComment },
@@ -117,7 +117,7 @@ export default {
     //   thumbStatus: false,
     // },
     articleData: {},
-    commentList: commentList,
+    commentList: [],
     hasLikedArr: [],
     styles: {
       thumbColor: "#808080",

@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { articleList } from "@/mock/articleList.js"
+
 export default {
   components: {},
   data: () => ({
@@ -56,7 +56,6 @@ export default {
   onLoad(options) {
     this.key = options.key
     this.getArticleList(this.key)
-    this.articleList = articleList
   },
 }
 </script>

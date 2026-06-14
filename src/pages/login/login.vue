@@ -82,27 +82,7 @@ export default {
 
     // 微信登录
     async weixinLogin() {
-      const IS_LOCAL_DEBUG = true; 
-      if (IS_LOCAL_DEBUG) {
-        try {
-          uni.setStorageSync("token", "fake_token_123")
-          this.getUserInfo({
-            nickName: "本地测试用户",
-            avatarUrl: "https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0",
-            id: '888888'
-          })
-          uni.$u.toast("本地免密登录成功！")
-          setTimeout(() => {
-            uni.switchTab({ 
-              url: "/pages/index/index",
-              fail: () => { uni.reLaunch({ url: "/pages/index/index" }) }
-            })
-          }, 800)
-        } catch (err) {
-          console.error(err)
-        }
-        return;
-      }
+
 
       try {
         const { userInfo } = await uni.getUserProfile({ desc: "获取微信用户信息", lang: "zh_CN" })

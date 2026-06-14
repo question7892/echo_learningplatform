@@ -1,5 +1,5 @@
 // 根路由
-const BASE_URL = "https://czqtolearn.mynatapp.cc"
+const BASE_URL = "http://59.110.163.182"
 
 // add token
 function addToken(args) {
