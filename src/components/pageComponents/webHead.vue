@@ -13,13 +13,19 @@
 			<view class="user-info">
 				<view class="info-item">搜索</view>
 				<view class="info-item m-left">消息</view>
-				<view class="avatar m-left"></view>
+				<image
+					class="avatar m-left"
+					:src="userInfo.avatarUrl || '/static/person/myHeaderPicture.jpg'"
+					mode="aspectFill"
+					@click="goPersonCenter"
+				></image>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	import { mapState } from "vuex"
 	export default {
 		created() {
 			console.log('WebHead Component Loaded');
@@ -34,10 +40,18 @@
 				]
 			};
 		},
+		computed: {
+			...mapState("userModule", ["userInfo"])
+		},
 		methods: {
 			gotoPage(url) {
 				uni.switchTab({
 					url
+				})
+			},
+			goPersonCenter() {
+				uni.switchTab({
+					url: '/pages/person/person'
 				})
 			}
 		}
@@ -117,6 +131,13 @@
 	height: 35px !important;
 	border-radius: 50% !important;
 	background-color: #eee !important;
+	object-fit: cover !important;
+	cursor: pointer !important;
+	border: 2px solid #f1f5f9 !important;
+	transition: border-color 0.2s !important;
+}
+.avatar:hover {
+	border-color: #6366f1 !important;
 }
 
 .m-left {
