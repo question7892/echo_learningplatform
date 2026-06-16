@@ -64,6 +64,7 @@
 </template>
 
 <script>
+import { saveBrowseHistory } from "@/utils/storageUtils.js"
 export default {
   props: {
     articleList: { type: Array, required: true },
@@ -71,6 +72,11 @@ export default {
   },
   methods: {
     gotoDetail(articleId) {
+      // 查找当前点击的文章数据并保存浏览记录
+      const article = this.articleList.find(item => item.id === articleId)
+      if (article) {
+        saveBrowseHistory(article)
+      }
       uni.navigateTo({ url: "/subPackages/index/articleDetail/articleDetail?articleId=" + articleId })
     },
   },
