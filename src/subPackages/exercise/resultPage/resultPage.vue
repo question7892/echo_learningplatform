@@ -136,10 +136,19 @@ export default {
     },
   },
   methods: {
+    // 将 UUID-keyed 的 answerSheet 转为有序数组
+    // answerSheet 可能是 {uuid: answer} 或已经是数组
+    getAnswerSheetArray() {
+      if (!this.answerSheet) return []
+      return Array.isArray(this.answerSheet)
+        ? this.answerSheet
+        : Object.values(this.answerSheet)
+    },
     // 判断某题是否答对
     isCorrect(index) {
       const correct = this.answerReport.answerList[index]
-      const user = this.answerSheet ? this.answerSheet[index] : null
+      const userArr = this.getAnswerSheetArray()
+      const user = userArr[index]
       if (user === null || user === undefined) return false
       if (Array.isArray(correct)) {
         if (!Array.isArray(user)) return false
@@ -154,7 +163,8 @@ export default {
     },
     // 获取用户答案
     getUserAnswer(index) {
-      const user = this.answerSheet ? this.answerSheet[index] : null
+      const userArr = this.getAnswerSheetArray()
+      const user = userArr[index]
       if (user === null || user === undefined) return '未作答'
       return Array.isArray(user) ? user.join('') : String(user)
     },
