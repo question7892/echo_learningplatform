@@ -1,5 +1,6 @@
 <template>
-	<!-- 聊天页面 -->
+<!-- #ifdef H5 -->
+<!-- 聊天页面 -->
 	<view class="chat-page">
 		<u-navbar :title="chatTittle" @rightClick="rightClick" :autoBack="true"></u-navbar>
 
@@ -20,10 +21,37 @@
 			<button class="chat-send-btn" @click="sendNews">发送</button>
 		</view>
 	</view>
+<!-- #endif -->
+<!-- #ifndef H5 -->
+<!-- 封装的组件，用于展示与某个用户的私信: -->
+	<!-- 自定义导航头: -->
+	<view class="chat">
+		<u-navbar :title="chatTittle" @rightClick="rightClick" :autoBack="true">
+		</u-navbar>
+		<!-- 下方显示的即为聊天区域: -->
+		<!-- 需要获得时间戳: -->
+		<view :style="{height: WindowHeight+'px'}" class="chatArea">
+			<!-- 单个聊天消息: -->
+			<view v-for="(item,index) in messageList" :key="index"
+				:class="{'reverse': item.id===id,'singleNews':item.id!==id}">
+				<!-- 其中包括用户头像，用户发送的消息内容,获取时间: -->
+				<image class="userImg" :src="item.userImg"></image>
+				<!-- 放置聊天内容的部分: -->
+				<text class="myContent">{{item.content}}</text>
+			</view>
+		</view>
+		<view class="inpContent">
+			<input v-model="iptValues" class="myipt" type="text" placeholder="请输入内容">
+			<text :style="{marginLeft: 10+ 'rpx',marginTop: 10+'rpx'}" class="icon iconfont icon-good myGood">666</text>
+			<button class="mybtn" @click="sendNews">发送</button>
+		</view>
+		<!-- <MyIpt :index="active" :isLike="isLike" :like="0" :action="action" @sendMyNew="receiveNews"></MyIpt> -->
+	</view>
+<!-- #endif -->
 </template>
 
 <script>
-	const { log } = console;
+const { log } = console;
 	export default {
 		onLoad(option) {
 			uni.setStorageSync('myId', 0)
@@ -116,7 +144,8 @@
 </script>
 
 <style lang="scss" scoped>
-	.chat-page {
+/* #ifdef H5 */
+.chat-page {
 		display: flex;
 		flex-direction: column;
 		background: #f5f6f8;
@@ -213,4 +242,105 @@
 			}
 		}
 	}
+/* #endif */
+/* #ifndef H5 */
+.chat {
+		display: flex;
+		position: relative;
+		flex-direction: column;
+
+		.chatArea {
+			background-color: #F4F4F4;
+			display: flex;
+			flex-direction: column;
+			margin-top: 150rpx;
+			// align-items: center;
+
+			.reverse {
+				display: flex;
+				// width: 100vw;
+				flex-direction: row-reverse;
+				margin: 20rpx;
+
+				.userImg {
+					width: 80rpx;
+					height: 80rpx;
+					border-radius: 50%;
+				}
+
+				.myContent {
+					padding: 15rpx;
+					// width: 70%;
+					margin-right: 25rpx;
+					display: flex;
+					flex-direction: row;
+					font-size: 30rpx;
+					// align-items: center;
+					background-color: aquamarine;
+					border-radius: 15rpx;
+				}
+			}
+
+			.singleNews {
+				// width: 90%;
+				display: flex;
+				// width: 100vw;
+				flex-direction: row;
+				margin: 20rpx;
+
+				.userImg {
+					width: 80rpx;
+					height: 80rpx;
+					border-radius: 50%;
+				}
+
+				.myContent {
+					padding: 15rpx;
+					width: 70%;
+					margin-left: 25rpx;
+					display: flex;
+					flex-direction: row;
+					font-size: 30rpx;
+					align-items: center;
+					background-color: aquamarine;
+					border-radius: 15rpx;
+				}
+			}
+		}
+
+		.inpContent {
+			width: 100%;
+			position: fixed;
+			bottom: 0;
+			background-color: white;
+			display: flex;
+			// justify-content: space-around;
+			padding: 20rpx 10rpx 20rpx 10rpx;
+			z-index: 1;
+			border-top: 1rpx solid #b598a1;
+			border-top-left-radius: 10rpx;
+			border-top-right-radius: 10rpx;
+
+			.myipt {
+				width: 70%;
+				border-radius: 20rpx;
+				border: 1rpx solid silver;
+			}
+
+			.mybtn {
+				// width: 15%;
+				display: flex;
+				height: 60rpx;
+				line-height: 60rpx;
+				font-size: 30rpx;
+			}
+
+			.myGood {
+				display: flex;
+				// width: 200rpx;
+				font-size: 30rpx;
+			}
+		}
+	}
+/* #endif */
 </style>

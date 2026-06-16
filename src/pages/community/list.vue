@@ -1,5 +1,6 @@
 <template>
-	<!-- 社区列表页 -->
+<!-- #ifdef H5 -->
+<!-- 社区列表页 -->
 	<view :class="{ 'web-list': isWeb }">
 		<!-- 选项栏 -->
 		<view class="list-tabs">
@@ -34,10 +35,50 @@
 			</scroll-view>
 		</view>
 	</view>
+<!-- #endif -->
+<!-- #ifndef H5 -->
+<!-- 关于社区的列表 -->
+	<view>
+		<!-- 最外层容器 -->
+		<view class="cummunityList">
+			<!-- 中上部选项列表 -->
+			<view ref="myOptions" class="cummunityList-options">
+				<view class="cummunityList-optCon" v-for="(item,index) in optionList" :key="index">
+					{{item}}
+				</view>
+			</view>
+			<!-- 单个列表内容： -->
+			<view :style="{ height: Math.floor(this.WindowHeight*0.8) + 'px' }" class="cummunityList-container">
+				<!-- 单个结构 -->
+				<!-- 需要包括一个左右布局：左边为一个导航栏，右侧为具体的社区选项 -->
+				<!-- 左侧容器： -->
+				<scroll-view scroll-y="true" class="cummunityList-leftList">
+					<!-- 单个社区左侧的导航栏: -->
+					<view class="cummunityList-singleCumm" v-for="(item,index) in leftList" :key="index">
+						{{item}}
+					</view>
+				</scroll-view>
+				<!-- 右侧容器: -->
+				<scroll-view scroll-y="true" class="cummunityList-rightList">
+					<view class="cummunityList-singleCummRight" v-for="(item,index) in rightList" :key="index"
+						@click="goCummunity(index)">
+						<image ref="cumPic" @click="handClick" :style="{width: imgWidth+'rpx',height: imgHeight+'rpx'}"
+							:src="item.src"></image>
+						<view class="cummunityList-rightListText">
+							<text>{{item.text}}</text>
+							<text>{{item.info}}</text>
+						</view>
+						<button size="mini" class="cummunityList-btn" @click.stop="joinCum">加入</button>
+					</view>
+				</scroll-view>
+			</view>
+		</view>
+	</view>
+<!-- #endif -->
 </template>
 
 <script>
-	import { myRequest } from '@/utils/utils.js';
+import { myRequest } from '@/utils/utils.js';
 	import { systemInfo } from '../../mixin.js'
 
 	export default {
@@ -135,7 +176,8 @@
 </script>
 
 <style lang="scss" scoped>
-	.list-tabs {
+/* #ifdef H5 */
+.list-tabs {
 		display: flex;
 		flex-direction: row;
 		padding: 16rpx 24rpx;
@@ -270,9 +312,7 @@
 			}
 		}
 	}
-
-	/* #ifdef H5 */
-	.web-list {
+.web-list {
 		.list-body {
 			height: auto !important;
 
@@ -281,5 +321,93 @@
 			}
 		}
 	}
-	/* #endif */
+/* #endif */
+/* #ifndef H5 */
+.cummunityList {
+		// font-size: 40rpx;
+		display: flex;
+		flex-direction: column;
+
+		.cummunityList-options {
+			display: flex;
+			flex-direction: row;
+			padding-left: 10rpx;
+
+			.cummunityList-optCon {
+				margin: 20rpx;
+				font-size: 35rpx;
+			}
+		}
+
+		// 包括一个左右布局
+		.cummunityList-container {
+			display: flex;
+			flex-direction: row;
+			// height: auto;
+			justify-content: space-between;
+
+			// 整个左侧列表:
+			.cummunityList-leftList {
+				flex: 1;
+				display: flex;
+				// font-size: 100%;
+				font-size: 35rpx;
+				overflow: scroll;
+				text-align: center;
+				flex-direction: column;
+				background-color: white;
+				justify-content: space-around;
+
+				// 左侧列表的单个容器布局:
+				.cummunityList-singleCumm {
+					padding: 30rpx 0 30rpx 0;
+					margin: 10rpx;
+				}
+
+				.cummunityList-singleCumm:active {
+					background-color: #F4F4F5;
+				}
+			}
+
+			.cummunityList-rightList {
+				flex: 3;
+				background-color: #F4F4F5;
+				padding: 0rpx 20rpx 10rpx 20rpx;
+
+				// padding: 20rpx;
+				.cummunityList-singleCummRight {
+					display: flex;
+					flex-direction: row;
+					position: relative;
+					margin: 0rpx auto 20rpx auto;
+					// width: 90%;
+					padding: 20rpx;
+					align-items: center;
+					background-color: white;
+
+					.cummunityList-rightListText {
+						display: flex;
+						margin-left: 20rpx;
+						font-size: 30rpx;
+						flex-direction: column;
+					}
+
+					.cummunityList-btn {
+						// width: 80rpx;
+						height: 60rpx;
+						font-size: 25rpx;
+						position: absolute;
+						right: 0;
+						margin-right: 20rpx;
+						line-height: 60rpx;
+					}
+				}
+
+				.cummunityList-singleCummRight:active {
+					background-color: #F4F4F5;
+				}
+			}
+		}
+	}
+/* #endif */
 </style>

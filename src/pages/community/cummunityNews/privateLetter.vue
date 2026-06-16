@@ -1,5 +1,6 @@
 <template>
-	<!-- 私信列表 -->
+<!-- #ifdef H5 -->
+<!-- 私信列表 -->
 	<view class="private-letter">
 		<view class="letter-header">
 			<text class="letter-title">聊天列表</text>
@@ -19,10 +20,37 @@
 			<text class="letter-arrow">›</text>
 		</view>
 	</view>
+<!-- #endif -->
+<!-- #ifndef H5 -->
+<view class="privateLetter">
+		<!-- 私信部分需要一个列表，显示哪些用户与“我”发过消息 -->
+		<!-- 同时私信页面还需要添加消息提醒，即badge -->
+		<view class="userList">
+			<!-- <view class="userList-tabs"> -->
+			<text class="userList-tabs">聊天列表</text>
+			<!-- </view> -->
+			<!-- 单个用户: -->
+			<!-- 分两个部分：左边为用户头像，中间为用户昵称和部分内容和时间 -->
+			<view class="userList-single" v-for="(item,index) in userList" :key="index" @click="showDetails(index)">
+				<image class="userImg" :src="item.userImg"></image>
+				<!-- 右侧部分: -->
+				<view class="userInfo">
+					<text class="userName">{{item.userName}}</text>
+					<text class="userContent">{{item.content}}</text>
+				</view>
+				<text class="userTime">{{item.time}}</text>
+				<!-- 用于作消息提醒的红点: -->
+				<view v-if="item.value!==0" class="mesRemind">
+					{{item.value}}
+				</view>
+			</view>
+		</view>
+	</view>
+<!-- #endif -->
 </template>
 
 <script>
-	export default {
+export default {
 		data() {
 			return {
 				userList: [{
@@ -74,7 +102,8 @@
 </script>
 
 <style lang="scss" scoped>
-	.private-letter {
+/* #ifdef H5 */
+.private-letter {
 		background-color: #f5f6f8;
 		min-height: 100vh;
 	}
@@ -179,4 +208,99 @@
 			flex-shrink: 0;
 		}
 	}
+/* #endif */
+/* #ifndef H5 */
+.privateLetter {
+		display: flex;
+		flex-direction: column;
+
+		// align-items: center;
+		.userList {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+
+			// justify-content: space-around;
+			.userList-tabs {
+				margin-left: 10rpx;
+				margin-bottom: 20rpx;
+				font-size: 35rpx;
+				padding: 10rpx 0 10rpx 0;
+				border-bottom: 1rpx solid #e9ccd3;
+				box-shadow: 10rpx 10rpx 10rpx rgba(0, 0, 0, .1);
+			}
+
+			// 单个用户部分:左右布局
+			.userList-single {
+				display: flex;
+				flex-direction: row;
+				justify-content: space-around;
+				padding: 15rpx 0 10rpx 0;
+				font-size: 35rpx;
+				border-bottom: 1rpx solid #e9d7df;
+				position: relative;
+
+				.userImg {
+					width: 100rpx;
+					height: 100rpx;
+					border-radius: 50%;
+				}
+
+				.userInfo {
+					display: flex;
+					width: 60%;
+					padding: 0 0 15rpx 15rpx;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+					position: relative;
+					flex-direction: column;
+
+					.userName {
+						// padding-bottom: 10rpx;
+					}
+
+					.userContent {
+						width: 90%;
+						margin-top: 5rpx;
+						font-size: 35rpx;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+					}
+				}
+
+				.userTime {
+					// margin-right: 8%;
+					width: 30%;
+					margin-top: 15rpx;
+					margin-right: 10rpx;
+					color: #b598a1;
+					font-size: 30rpx;
+				}
+
+				.mesRemind {
+					width: 50rpx;
+					height: 50rpx;
+					position: absolute;
+					bottom: 20%;
+					right: 2%;
+					color: white;
+					font-size: 30rpx;
+					border-radius: 50%;
+					line-height: 50rpx;
+					background-color: #d2357d;
+					text-align: center;
+				}
+
+				// 动态绑定的样式，在列表元素被点击之后
+				.mesActive {}
+			}
+
+			.userList-single:active {
+				background-color: #d1c2d3;
+			}
+		}
+	}
+/* #endif */
 </style>

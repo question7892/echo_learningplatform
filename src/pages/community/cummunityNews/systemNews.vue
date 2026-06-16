@@ -1,5 +1,6 @@
 <template>
-	<!-- 系统通知消息 -->
+<!-- #ifdef H5 -->
+<!-- 系统通知消息 -->
 	<view class="system-news">
 		<view class="news-card" v-for="(item, index) in list" :key="index">
 			<view class="news-header">
@@ -18,10 +19,36 @@
 			</view>
 		</view>
 	</view>
+<!-- #endif -->
+<!-- #ifndef H5 -->
+<!-- 系统通知消息: -->
+	<!-- 包含头像与文字 -->
+	<!-- 使用封装的组件 -->
+	<!-- 外部容器，左右布局，主要为头像和消息部分 -->
+	<view class="container">
+		<view class="container-wrap" v-for="(item,index) in list" :key="index">
+			<view class="imgContainer">
+				<image class="container-headerImg" :src="src" mode=""></image>
+			</view>
+			<view class="container-systemNews">
+				<!-- 消息部分包括系统消息的标题和内容 -->
+				<view class="container-tittle">
+					{{item.tittle}}
+				</view>
+				<view class="container-text">
+					{{item.text}}
+				</view>
+				<view class="container-time">
+					{{item.time}}
+				</view>
+			</view>
+		</view>
+	</view>
+<!-- #endif -->
 </template>
 
 <script>
-	export default {
+export default {
 		data() {
 			return {
 				src: 'https://s2.loli.net/2022/04/23/j5nmRFBOvrxgJNo.png',
@@ -40,7 +67,8 @@
 </script>
 
 <style lang="scss" scoped>
-	.system-news {
+/* #ifdef H5 */
+.system-news {
 		padding: 20rpx;
 		background-color: #f5f6f8;
 		min-height: 100vh;
@@ -116,4 +144,50 @@
 			}
 		}
 	}
+/* #endif */
+/* #ifndef H5 */
+.container {
+		&-wrap {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-around;
+			padding-bottom: 20rpx;
+			border-bottom: 1rpx solid rgb(226, 225, 228);
+
+			.imgContainer {
+				// width: 10%;
+
+				.container-headerImg {
+					width: 100rpx;
+					height: 100rpx;
+					margin: 20rpx 10rpx 0 14rpx;
+					border-radius: 50%;
+				}
+
+			}
+
+			.container-systemNews {
+				width: 75%;
+				display: flex;
+				flex-direction: column;
+				padding: 10rpx 10rpx 10rpx 0;
+
+				.container-tittle {
+					padding-bottom: 10rpx;
+					font-size: 40rpx;
+					font-weight: bold;
+				}
+
+				.container-text {
+					font-size: 35rpx;
+				}
+				.container-time{
+					margin-top: 15rpx;
+					font-size: 30rpx;
+					color: #7a7374;
+				}
+			}
+		}
+	}
+/* #endif */
 </style>

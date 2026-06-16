@@ -105,7 +105,7 @@ export default {
       try {
         const { data: res } = await uni.request({
           url: "/question/user/get/analysis",
-          method: "GET",
+          method: "POST",
           data: {
             QuestionSetId: this.questionGroupInfo.QuestionSetId,
             answerObj: this.questionGroupInfo.answerObj,
